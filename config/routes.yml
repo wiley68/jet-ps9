@@ -1,0 +1,5 @@
+credit_jet_configuration_form:
+  path: /creditjet/configuration_form
+  methods: [GET, POST]
+  defaults:
+    _controller: 'PrestaShop\Module\CreditJet\Controller\CreditJetConfigurationController::index'
