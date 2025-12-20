@@ -1,29 +1,42 @@
 services:
   _defaults:
-    public: true
+    public: false
+    autowire: true
+    autoconfigure: true
 
-  # CreditJet configuration form
+  # Form type
   prestashop.module.creditjet.form.type.creditjet_configuration:
-    class: 'PrestaShop\Module\CreditJet\Form\CreditJetConfigurationType'
-    parent: 'form.type.translatable.aware'
+    class: PrestaShop\Module\CreditJet\Form\CreditJetConfigurationType
+    parent: form.type.translatable.aware
     public: true
     tags:
       - { name: form.type }
 
   prestashop.module.creditjet.form.creditjet_configuration_data_configuration:
     class: PrestaShop\Module\CreditJet\Form\CreditJetConfigurationDataConfiguration
-    arguments: ['@prestashop.adapter.legacy.configuration']
+    arguments:
+      - '@prestashop.adapter.legacy.configuration'
 
   prestashop.module.creditjet.form.creditjet_configuration_form_data_provider:
-    class: 'PrestaShop\Module\CreditJet\Form\CreditJetConfigurationFormDataProvider'
+    class: PrestaShop\Module\CreditJet\Form\CreditJetConfigurationFormDataProvider
     arguments:
       - '@prestashop.module.creditjet.form.creditjet_configuration_data_configuration'
 
+  # Form handler
   prestashop.module.creditjet.creditjet_configuration_form_handler:
-    class: 'PrestaShop\PrestaShop\Core\Form\Handler'
+    class: PrestaShop\PrestaShop\Core\Form\Handler
     arguments:
       - '@form.factory'
       - '@prestashop.core.hook.dispatcher'
       - '@prestashop.module.creditjet.form.creditjet_configuration_form_data_provider'
       - 'PrestaShop\Module\CreditJet\Form\CreditJetConfigurationType'
       - 'CreditJetConfiguration'
+    public: true
+
+  # Admin controller as Symfony service (IMPORTANT)
+  prestashop.module.creditjet.controller.credit_jet_configuration:
+    class: PrestaShop\Module\CreditJet\Controller\CreditJetConfigurationController
+    public: true
+    arguments:
+      - '@prestashop.module.creditjet.creditjet_configuration_form_handler'
+    tags: ['controller.service_arguments']

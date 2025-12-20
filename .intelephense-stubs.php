@@ -41,6 +41,45 @@ namespace Symfony\Component\HttpFoundation {
     }
 }
 
+// Symfony Framework Bundle
+namespace Symfony\Bundle\FrameworkBundle\Controller {
+
+    abstract class AbstractController
+    {
+        public function render(string $template, array $params = []): \Symfony\Component\HttpFoundation\Response
+        {
+            return new \Symfony\Component\HttpFoundation\Response('', 200);
+        }
+
+        public function renderView(string $template, array $params = []): string
+        {
+            return '';
+        }
+
+        public function generateUrl(string $route, array $params = []): string
+        {
+            return '';
+        }
+
+        public function redirectToRoute(string $route, array $params = []): \Symfony\Component\HttpFoundation\Response
+        {
+            return new \Symfony\Component\HttpFoundation\Response('', 302, ['Location' => '']);
+        }
+
+        public function get(string $service)
+        {
+            return null;
+        }
+
+        public function addFlash(string $type, string $message): void {}
+
+        public function createForm(string $type, $data = null, array $options = []): mixed
+        {
+            return null;
+        }
+    }
+}
+
 // Symfony Form classes
 namespace Symfony\Component\Form {
 
@@ -153,6 +192,37 @@ namespace PrestaShop\PrestaShop\Core\Form {
         public function getData(): array;
         public function setData(array $data): array;
     }
+
+    class Handler
+    {
+        public function __construct($formFactory, $hookDispatcher, $formDataProvider, string $formType, string $formName) {}
+
+        public function getForm(): mixed
+        {
+            return null;
+        }
+
+        public function save(array $data): array
+        {
+            return [];
+        }
+    }
+}
+
+// Symfony Dependency Injection
+namespace Symfony\Component\DependencyInjection {
+
+    interface ContainerAwareInterface
+    {
+        public function setContainer(ContainerInterface $container = null);
+    }
+
+    interface ContainerInterface
+    {
+        public function get(string $id);
+        public function has(string $id): bool;
+        public function set(string $id, $service);
+    }
 }
 
 namespace PrestaShopBundle\Form\Admin\Type {
@@ -176,9 +246,10 @@ namespace PrestaShopBundle\Form\Admin\Type {
     }
 }
 
-namespace {
+// PrestaShop Bundle Admin Controller
+namespace PrestaShopBundle\Controller\Admin {
 
-    class FrameworkBundleAdminController extends Controller
+    class PrestaShopAdminController extends \Symfony\Bundle\FrameworkBundle\Controller\AbstractController
     {
         public function generateUrl(string $route, array $params = []): string
         {
@@ -195,6 +266,16 @@ namespace {
         public function render(string $template, array $params = []): \Symfony\Component\HttpFoundation\Response
         {
             return new \Symfony\Component\HttpFoundation\Response('', 200);
+        }
+
+        public function renderWithTemplate(string $template, array $params = []): \Symfony\Component\HttpFoundation\Response
+        {
+            return new \Symfony\Component\HttpFoundation\Response('', 200);
+        }
+
+        public function renderView(string $template, array $params = []): string
+        {
+            return '';
         }
 
         public function flashErrors(array $errors): void {}
@@ -234,6 +315,9 @@ namespace {
             };
         }
     }
+}
+
+namespace {
 
     class Db
     {

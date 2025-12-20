@@ -155,4 +155,9 @@ class CreditJet extends PaymentModule
         Tools::redirectAdmin($route);
         return '';
     }
+
+    public function hookActionFrontControllerSetMedia($params)
+    {
+        // Load assets only on your BO pages or specific front pages if needed
+    }
 }

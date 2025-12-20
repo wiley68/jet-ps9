@@ -7,25 +7,29 @@ namespace PrestaShop\Module\CreditJet\Controller;
 use Context;
 use Db;
 use DbQuery;
+use PrestaShop\PrestaShop\Core\Form\Handler;
+use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CreditJetConfigurationController extends \FrameworkBundleAdminController
+class CreditJetConfigurationController extends PrestaShopAdminController
 {
+    public function __construct(
+        private readonly Handler $configurationFormHandler
+    ) {
+        // empty
+    }
 
     public function index(Request $request): Response
     {
-        $textFormDataHandler = $this->get('prestashop.module.creditjet.creditjet_configuration_form_handler');
-
-        $textForm = $textFormDataHandler->getForm();
+        $textForm = $this->configurationFormHandler->getForm();
         $textForm->handleRequest($request);
 
         if ($textForm->isSubmitted() && $textForm->isValid()) {
-            $errors = $textFormDataHandler->save($textForm->getData());
+            $errors = $this->configurationFormHandler->save($textForm->getData());
 
             if (empty($errors)) {
                 $this->addFlash('success', 'Успешна актуализация');
-
                 return $this->redirectToRoute('credit_jet_configuration_form');
             }
 
@@ -41,17 +45,17 @@ class CreditJetConfigurationController extends \FrameworkBundleAdminController
             'creditJetConfigurationForm' => $textForm->createView(),
             'link_to_create_schema_creditjet' => $link_to_create_schema_creditjet,
             'link_to_delete_schema_creditjet' => $link_to_delete_schema_creditjet,
-            'creditjet_schemes' => $creditjet_schemes
+            'creditjet_schemes' => $creditjet_schemes,
         ]);
     }
 
-    public function getAllJetKopRows()
+    private function getAllJetKopRows(): array
     {
         $sql = new DbQuery();
         $sql->select('*');
         $sql->from('jet_kop');
-        $results = Db::getInstance()->executeS($sql);
 
-        return $results;
+        $results = Db::getInstance()->executeS($sql);
+        return is_array($results) ? $results : [];
     }
 }
