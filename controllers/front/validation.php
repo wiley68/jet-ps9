@@ -26,7 +26,7 @@ class CreditJetValidationModuleFrontController extends ModuleFrontController
 
         // Check if module is active and configured
         if (!$this->module->active || !$this->module->isConfigured()) {
-            $this->errors[] = $this->module->l('Модулът за плащане не е активен или конфигуриран.');
+            $this->errors[] = $this->module->l('The payment module is not active or configured.');
             $this->redirectWithNotifications($this->context->link->getPageLink('order', true, null, ['step' => 3]));
         }
 
@@ -38,7 +38,7 @@ class CreditJetValidationModuleFrontController extends ModuleFrontController
 
         // Check currency
         if (!$this->module->checkCurrency($cart->id_currency)) {
-            $this->errors[] = $this->module->l('Валутата не се поддържа от този метод на плащане.');
+            $this->errors[] = $this->module->l('Currency is not supported by this payment method.');
             $this->redirectWithNotifications($this->context->link->getPageLink('order', true, null, ['step' => 3]));
         }
 
@@ -51,7 +51,7 @@ class CreditJetValidationModuleFrontController extends ModuleFrontController
 
         if ($total < $minAmount || $total > $maxAmount) {
             $this->errors[] = sprintf(
-                $this->module->l('Сумата %.2f %s е извън позволените лимити (%.2f - %.2f %s).'),
+                $this->module->l('Amount %.2f %s is outside the allowed limits (%.2f - %.2f %s).'),
                 $total,
                 $this->context->currency->iso_code,
                 $minAmount,

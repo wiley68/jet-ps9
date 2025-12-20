@@ -9,14 +9,14 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
 /**
  * CreditJet Payment Module for PrestaShop 9.x
- * Piraeus Personal Finance Credit Calculator
+ * PB Personal Finance Credit Calculator
  */
 class CreditJet extends PaymentModule
 {
     /**
      * Module configuration keys
      */
-    const CONFIG_MERCHANT_ID = 'CREDITJET_MERCHANT_ID';
+    const CONFIG_CREDITJET_NAME = 'CREDITJET_NAME';
     const CONFIG_API_KEY = 'CREDITJET_API_KEY';
     const CONFIG_SANDBOX_MODE = 'CREDITJET_SANDBOX_MODE';
     const CONFIG_MIN_AMOUNT = 'CREDITJET_MIN_AMOUNT';
@@ -37,12 +37,12 @@ class CreditJet extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('CreditJet - Париба лични финанси');
-        $this->description = $this->l('Кредитен калкулатор и плащане чрез Париба лични финанси');
-        $this->confirmUninstall = $this->l('Сигурни ли сте, че искате да деинсталирате CreditJet модула?');
+        $this->displayName = $this->l('PB Personal Finance');
+        $this->description = $this->l('Allows your customers to purchase goods on installments with PB Personal Finance');
+        $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
 
-        if (!Configuration::get(static::CONFIG_MERCHANT_ID)) {
-            $this->warning = $this->l('Моля конфигурирайте модула CreditJet.');
+        if (!Configuration::get(static::CONFIG_CREDITJET_NAME)) {
+            $this->warning = $this->l('No merchant ID provided');
         }
     }
 
@@ -130,19 +130,19 @@ class CreditJet extends PaymentModule
         $maxAmount = (float)Tools::getValue(static::CONFIG_MAX_AMOUNT);
 
         if (empty($merchantId)) {
-            $errors[] = $this->l('Моля въведете Merchant ID.');
+            $errors[] = $this->l('Please enter Merchant ID.');
         }
 
         if (empty($apiKey)) {
-            $errors[] = $this->l('Моля въведете API Key.');
+            $errors[] = $this->l('Please enter API Key.');
         }
 
         if ($minAmount <= 0) {
-            $errors[] = $this->l('Минималната сума трябва да бъде по-голяма от 0.');
+            $errors[] = $this->l('Minimum amount must be greater than 0.');
         }
 
         if ($maxAmount <= $minAmount) {
-            $errors[] = $this->l('Максималната сума трябва да бъде по-голяма от минималната.');
+            $errors[] = $this->l('Maximum amount must be greater than minimum amount.');
         }
 
         if (empty($errors)) {
@@ -152,7 +152,7 @@ class CreditJet extends PaymentModule
             Configuration::updateValue(static::CONFIG_MIN_AMOUNT, $minAmount);
             Configuration::updateValue(static::CONFIG_MAX_AMOUNT, $maxAmount);
 
-            $output = $this->displayConfirmation($this->l('Настройките са запазени успешно.'));
+            $output = $this->displayConfirmation($this->l('Settings saved successfully.'));
         } else {
             $output = $this->displayError(implode('<br />', $errors));
         }
@@ -200,7 +200,7 @@ class CreditJet extends PaymentModule
         return [
             'form' => [
                 'legend' => [
-                    'title' => $this->l('Настройки на CreditJet'),
+                    'title' => $this->l('CreditJet Settings'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => [
@@ -209,51 +209,51 @@ class CreditJet extends PaymentModule
                         'label' => $this->l('Merchant ID'),
                         'name' => static::CONFIG_MERCHANT_ID,
                         'required' => true,
-                        'desc' => $this->l('Въведете вашия CreditJet Merchant ID'),
+                        'desc' => $this->l('Enter your CreditJet Merchant ID'),
                     ],
                     [
                         'type' => 'text',
                         'label' => $this->l('API Key'),
                         'name' => static::CONFIG_API_KEY,
                         'required' => true,
-                        'desc' => $this->l('Въведете вашия CreditJet API Key'),
+                        'desc' => $this->l('Enter your CreditJet API Key'),
                     ],
                     [
                         'type' => 'switch',
-                        'label' => $this->l('Тестов режим'),
+                        'label' => $this->l('Sandbox Mode'),
                         'name' => static::CONFIG_SANDBOX_MODE,
                         'is_bool' => true,
-                        'desc' => $this->l('Активирайте за тестов режим'),
+                        'desc' => $this->l('Enable for sandbox/test mode'),
                         'values' => [
                             [
                                 'id' => 'active_on',
                                 'value' => 1,
-                                'label' => $this->l('Включен'),
+                                'label' => $this->l('Enabled'),
                             ],
                             [
                                 'id' => 'active_off',
                                 'value' => 0,
-                                'label' => $this->l('Изключен'),
+                                'label' => $this->l('Disabled'),
                             ],
                         ],
                     ],
                     [
                         'type' => 'text',
-                        'label' => $this->l('Минимална сума'),
+                        'label' => $this->l('Minimum Amount'),
                         'name' => static::CONFIG_MIN_AMOUNT,
                         'suffix' => $this->context->currency->iso_code,
-                        'desc' => $this->l('Минимална сума за кредитно плащане'),
+                        'desc' => $this->l('Minimum amount for credit payment'),
                     ],
                     [
                         'type' => 'text',
-                        'label' => $this->l('Максимална сума'),
+                        'label' => $this->l('Maximum Amount'),
                         'name' => static::CONFIG_MAX_AMOUNT,
                         'suffix' => $this->context->currency->iso_code,
-                        'desc' => $this->l('Максимална сума за кредитно плащане'),
+                        'desc' => $this->l('Maximum amount for credit payment'),
                     ],
                 ],
                 'submit' => [
-                    'title' => $this->l('Запази'),
+                    'title' => $this->l('Save'),
                 ],
             ],
         ];
@@ -300,9 +300,9 @@ class CreditJet extends PaymentModule
         }
 
         $paymentOption = new PaymentOption();
-        $paymentOption->setCallToActionText($this->l('Плати с кредит от Париба'))
+        $paymentOption->setCallToActionText($this->l('Pay with Piraeus Credit'))
             ->setAction($this->context->link->getModuleLink($this->name, 'validation', [], true))
-            ->setAdditionalInformation($this->l('Платете на вноски с кредит от Париба лични финанси'))
+            ->setAdditionalInformation($this->l('Pay in installments with Piraeus Personal Finance credit'))
             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/logo.png'));
 
         return [$paymentOption];

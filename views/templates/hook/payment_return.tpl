@@ -3,17 +3,17 @@
 * Payment return template
 *}
 
-<p>{l s='Вашата поръчка е завършена успешно.' mod='creditjet'}</p>
+<p>{l s='Your order has been completed successfully.' mod='creditjet'}</p>
 
 <div class="box">
-    <h3>{l s='Информация за поръчката' mod='creditjet'}</h3>
+    <h3>{l s='Order Information' mod='creditjet'}</h3>
     <ul>
-        <li><strong>{l s='Номер на поръчка:' mod='creditjet'}</strong> {$id_order}</li>
-        <li><strong>{l s='Обща сума:' mod='creditjet'}</strong> {$total_to_pay}</li>
-        <li><strong>{l s='Метод на плащане:' mod='creditjet'}</strong>
-            {l s='CreditJet - Париба лични финанси' mod='creditjet'}</li>
+        <li><strong>{l s='Order Number:' mod='creditjet'}</strong> {$id_order}</li>
+        <li><strong>{l s='Total Amount:' mod='creditjet'}</strong> {$total_to_pay}</li>
+        <li><strong>{l s='Payment Method:' mod='creditjet'}</strong>
+            {l s='CreditJet - Piraeus Personal Finance' mod='creditjet'}</li>
     </ul>
 </div>
 
-<p>{l s='Ще получите имейл с потвърждение на поръчката.' mod='creditjet'}</p>
-<p>{l s='Благодарим за покупката!' mod='creditjet'}</p>
+<p>{l s='You will receive an email confirmation of your order.' mod='creditjet'}</p>
+<p>{l s='Thank you for your purchase!' mod='creditjet'}</p>
