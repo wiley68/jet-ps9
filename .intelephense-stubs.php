@@ -9,6 +9,13 @@ namespace Symfony\Component\HttpFoundation {
 
     class Request
     {
+        public $request;
+
+        public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [])
+        {
+            $this->request = (object)$request;
+        }
+
         public function getMethod(): string
         {
             return 'GET';
@@ -38,6 +45,11 @@ namespace Symfony\Component\HttpFoundation {
         {
             return $this;
         }
+    }
+
+    class JsonResponse
+    {
+        public function __construct($data = null, int $status = 200, array $headers = [], bool $json = false) {}
     }
 }
 
@@ -231,7 +243,7 @@ namespace PrestaShopBundle\Form\Admin\Type {
     {
         public function buildForm(\Symfony\Component\Form\FormBuilderInterface $builder, array $options): void {}
         public function configureOptions(\Symfony\Component\OptionsResolver\OptionsResolver $resolver): void {}
-        protected function trans(string $id, string $domain = null, array $parameters = []): string
+        public function trans(string $id, array $parameters = [], string $domain = null): string
         {
             return $id;
         }
@@ -279,6 +291,11 @@ namespace PrestaShopBundle\Controller\Admin {
         }
 
         public function flashErrors(array $errors): void {}
+
+        public function trans(string $id, array $parameters = [], string $domain = null): string
+        {
+            return $id;
+        }
 
         public function get(string $service)
         {
@@ -382,6 +399,10 @@ namespace {
         {
             return '';
         }
+        public function delete(string $table = null): self
+        {
+            return $this;
+        }
         public function __toString(): string
         {
             return $this->build();
@@ -416,6 +437,73 @@ namespace {
             return '';
         }
         public function send(): self
+        {
+            return $this;
+        }
+    }
+
+    class ObjectModel
+    {
+        public const TYPE_INT = 1;
+        public const TYPE_BOOL = 2;
+        public const TYPE_STRING = 3;
+        public const TYPE_FLOAT = 4;
+        public const TYPE_DATE = 5;
+        public const TYPE_HTML = 6;
+        public const TYPE_NOTHING = 7;
+        public const TYPE_SQL = 8;
+
+        public static $definition = [];
+        public $id;
+
+        public function __construct($id = null, $id_lang = null, $id_shop = null) {}
+
+        public function save(): bool
+        {
+            return true;
+        }
+
+        public function delete(): bool
+        {
+            return true;
+        }
+
+        public static function getFieldsValidate(): array
+        {
+            return [];
+        }
+
+        public static function getValidationRules(): array
+        {
+            return [];
+        }
+
+        public function validateFields($die = true, $error_return = false): bool
+        {
+            return true;
+        }
+
+        public function validateField($field, $value, $id_lang = null, $skip = [], $human_errors = false)
+        {
+            return true;
+        }
+
+        public function add($auto_date = true, $null_values = false): bool
+        {
+            return true;
+        }
+
+        public function update($null_values = false): bool
+        {
+            return true;
+        }
+
+        public static function hydrateCollection($class, array $data, $id_lang = null): array
+        {
+            return [];
+        }
+
+        public function hydrate(array $data, $id_lang = null): self
         {
             return $this;
         }
@@ -811,6 +899,23 @@ namespace {
         public function initContent() {}
     }
 
+    class ModuleAdminController extends AdminController
+    {
+        public $ajax = false;
+        public $module;
+
+        public function __construct() {}
+
+        public function initContent(): void {}
+
+        public function ajaxProcess(): void {}
+
+        public function ajaxDie($value): void
+        {
+            die($value);
+        }
+    }
+
     class ModuleFrontController extends FrontController
     {
         public $module;
@@ -895,4 +1000,10 @@ namespace {
     define('PS_OS_BANKWIRE', 10);
     define('PS_OS_PAYPAL', 10);
     define('PS_OS_WS_PAYMENT', 11);
+
+    // Global functions
+    function pSQL($string, $htmlOK = false): string
+    {
+        return (string)$string;
+    }
 }

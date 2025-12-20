@@ -151,8 +151,10 @@ class CreditJet extends PaymentModule
 
     public function getContent(): string
     {
-        $route = $this->get('router')->generate('credit_jet_configuration_form');
-        Tools::redirectAdmin($route);
+        // Redirect to the new Symfony-based configuration page
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true, [
+            'configure' => 'creditjet'
+        ]));
         return '';
     }
 

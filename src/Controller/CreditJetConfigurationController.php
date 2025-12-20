@@ -29,16 +29,16 @@ class CreditJetConfigurationController extends PrestaShopAdminController
             $errors = $this->configurationFormHandler->save($textForm->getData());
 
             if (empty($errors)) {
-                $this->addFlash('success', 'Успешна актуализация');
-                return $this->redirectToRoute('credit_jet_configuration_form');
+                $this->addFlash('success', $this->trans('Successful update', [], 'Modules.Creditjet.Admin'));
+                return $this->redirectToRoute('creditjet_configuration');
             }
 
             $this->flashErrors($errors);
         }
 
         $context = Context::getContext();
-        $link_to_create_schema_creditjet = $context->link->getModuleLink('creditjet', 'createschema', []);
-        $link_to_delete_schema_creditjet = $context->link->getModuleLink('creditjet', 'deleteschema', []);
+        $link_to_create_schema_creditjet = $this->generateUrl('credit_jet_create_schema');
+        $link_to_delete_schema_creditjet = $this->generateUrl('credit_jet_delete_schema');
         $creditjet_schemes = $this->getAllJetKopRows();
 
         return $this->render('@Modules/creditjet/views/templates/admin/form.html.twig', [
