@@ -1,0 +1,24 @@
+{
+    "name": "prestashop/creditjet",
+    "description": "Piraeus Personal Finance Credit Calculator",
+    "license": "AFL-3.0",
+    "authors": [
+      {
+        "name": "Ilko Ivanov",
+        "email": "ilko.iv@gmail.com"
+      }
+    ],
+    "autoload": {
+      "psr-4": {
+        "PrestaShop\\Module\\CreditJet\\": "src/"
+      }
+    },
+    "require": {
+      "php": ">=8.1"
+    },
+    "config": {
+      "preferred-install": "dist",
+      "prepend-autoloader": false
+    },
+    "type": "prestashop-module"
+  }
