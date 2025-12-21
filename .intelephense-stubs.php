@@ -228,6 +228,11 @@ namespace PrestaShop\PrestaShop\Core\Form {
         {
             return '';
         }
+
+        public static function getInstanceByName(string $module_name): ?\Module
+        {
+            return null;
+        }
     }
 }
 
@@ -1010,6 +1015,11 @@ namespace {
     class ModuleFrontController extends FrontController
     {
         public $module;
+
+        public function isXmlHttpRequest(): bool
+        {
+            return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+        }
     }
 
     // Admin Controller
