@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CreditJetConfigurationController extends PrestaShopAdminController
 {
+    private const DOMAIN = 'Modules.Creditjet.Admin';
+
     public function __construct(
         private readonly Handler $configurationFormHandler
     ) {
@@ -29,7 +31,7 @@ class CreditJetConfigurationController extends PrestaShopAdminController
             $errors = $this->configurationFormHandler->save($textForm->getData());
 
             if (empty($errors)) {
-                $this->addFlash('success', $this->trans('Successful update', 'Modules.Creditjet.Admin'));
+                $this->addFlash('success', $this->trans('Successful update', [], self::DOMAIN));
                 return $this->redirectToRoute('credit_jet_configuration_form');
             }
 

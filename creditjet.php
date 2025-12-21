@@ -63,7 +63,7 @@ class Creditjet extends PaymentModule
         $bgnCurrency = Currency::getIdByIsoCode('BGN');
 
         if ((!$eurCurrency && !$bgnCurrency) && $this->active) {
-            $this->warning = $this->trans('EUR or BGN currency must be enabled in the system.', 'Modules.Creditjet.Admin');
+            $this->warning = $this->l('EUR or BGN currency must be enabled in the system.');
         }
 
         if (!Configuration::get('CREDITJET_NAME')) {

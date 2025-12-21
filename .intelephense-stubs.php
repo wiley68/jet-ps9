@@ -315,7 +315,7 @@ namespace PrestaShopBundle\Controller\Admin {
 
         public function flashErrors(array $errors): void {}
 
-        public function trans(string $id, string $domain, array $parameters = []): string
+        public function trans(string $id, array $parameters = [], string $domain = null): string
         {
             return $id;
         }
