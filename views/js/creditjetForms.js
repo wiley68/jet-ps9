@@ -21,7 +21,10 @@ const create_creditjet_schema = () => {
             success: function (json) {
                 if (json.success == 'success') {
                     showSuccessMessage(json.text || window.creditjetTranslations.createSuccess);
-                    window.location.reload();
+                    // Delay reload to allow user to see the success message
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 2000); // 2 seconds delay
                 } else {
                     showErrorMessage(json.text || window.creditjetTranslations.createError);
                 }
@@ -47,7 +50,10 @@ const delete_creditjet_schema = (id) => {
         success: function (json) {
             if (json.success == 'success') {
                 showSuccessMessage(json.text || window.creditjetTranslations.deleteSuccess);
-                window.location.reload();
+                // Delay reload to allow user to see the success message
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000); // 2 seconds delay
             } else {
                 showErrorMessage(json.text || window.creditjetTranslations.deleteError);
             }

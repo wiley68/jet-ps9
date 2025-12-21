@@ -63,10 +63,10 @@ class JetCreditModel extends ObjectModel
 
     public static function deleteByJetProductId($jet_product_id): bool
     {
-        $sql = new DbQuery();
-        $sql->delete(self::TABLE_NAME);
-        $sql->where('jet_product_id = \'' . pSQL($jet_product_id) . '\'');
-        return Db::getInstance()->execute($sql->build());
+        return Db::getInstance()->delete(
+            self::TABLE_NAME,
+            'jet_product_id = \'' . pSQL($jet_product_id) . '\''
+        );
     }
 
     public static function getPromo($jet_product_id, $jet_vnoski, $jet_total_credit_price): array

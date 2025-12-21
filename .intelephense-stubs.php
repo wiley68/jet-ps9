@@ -388,15 +388,15 @@ namespace {
         {
             return null;
         }
+        public function delete(string $table, string $where = '', int $limit = 0, bool $use_cache = true, bool $use_null = false): bool
+        {
+            return true;
+        }
         public function insert(string $table, array $data, bool $null_values = false, bool $use_cache = true, int $type = 3, bool $add_prefix = true): bool
         {
             return true;
         }
         public function update(string $table, array $data, string $where = '', int $limit = 0, bool $null_values = false, bool $use_cache = true, bool $add_prefix = true): bool
-        {
-            return true;
-        }
-        public function delete(string $table, string $where = '', int $limit = 0, bool $add_prefix = true): bool
         {
             return true;
         }
