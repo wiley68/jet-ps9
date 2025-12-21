@@ -24,7 +24,7 @@ class CreateSchemaController extends PrestaShopAdminController
         if (!$request->isMethod('POST')) {
             return new Response(json_encode([
                 'success' => 'error',
-                'text' => $this->trans('Invalid request method', [], 'Modules.Creditjet.Admin')
+                'text' => $this->trans('Invalid request method', 'Modules.Creditjet.Admin')
             ]), 200, ['Content-Type' => 'application/json']);
         }
 
@@ -41,7 +41,7 @@ class CreateSchemaController extends PrestaShopAdminController
             if (empty($jet_product_id) || empty($jet_product_meseci) || $jet_product_price === '' || empty($jet_product_start) || empty($jet_product_end)) {
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('All fields are required', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('All fields are required', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
 
@@ -49,7 +49,7 @@ class CreateSchemaController extends PrestaShopAdminController
             if (!is_numeric($jet_product_percent) || !is_numeric($jet_product_price)) {
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('Invalid numeric values', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('Invalid numeric values', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
 
@@ -67,25 +67,25 @@ class CreateSchemaController extends PrestaShopAdminController
                 // Scheme already exists
                 return new Response(json_encode([
                     'success' => 'success',
-                    'text' => $this->trans('You already have such a filter in place!', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('You already have such a filter in place!', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             } elseif ((int)$result === 0) {
                 // Database error
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('You cannot create the filter.', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('You cannot create the filter.', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             } else {
                 // Success
                 return new Response(json_encode([
                     'success' => 'success',
-                    'text' => $this->trans('You have successfully written the filter.', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('You have successfully written the filter.', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
         } catch (\Exception $e) {
             return new Response(json_encode([
                 'success' => 'unsuccess',
-                'text' => $this->trans('An error occurred: %error%', ['%error%' => $e->getMessage()], 'Modules.Creditjet.Admin')
+                'text' => $this->trans('An error occurred: %error%', 'Modules.Creditjet.Admin', ['%error%' => $e->getMessage()])
             ]), 200, ['Content-Type' => 'application/json']);
         }
     }

@@ -23,7 +23,7 @@ class DeleteSchemaController extends PrestaShopAdminController
         if (!$request->isMethod('POST')) {
             return new Response(json_encode([
                 'success' => 'unsuccess',
-                'text' => $this->trans('Invalid request method', [], 'Modules.Creditjet.Admin')
+                'text' => $this->trans('Invalid request method', 'Modules.Creditjet.Admin')
             ]), 200, ['Content-Type' => 'application/json']);
         }
 
@@ -35,7 +35,7 @@ class DeleteSchemaController extends PrestaShopAdminController
             if (empty($jet_product_id)) {
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('Product ID is required', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('Product ID is required', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
 
@@ -45,18 +45,18 @@ class DeleteSchemaController extends PrestaShopAdminController
             if ($result) {
                 return new Response(json_encode([
                     'success' => 'success',
-                    'text' => $this->trans('Credit scheme deleted successfully', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('Credit scheme deleted successfully', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             } else {
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('Failed to delete credit scheme', [], 'Modules.Creditjet.Admin')
+                    'text' => $this->trans('Failed to delete credit scheme', 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
         } catch (\Exception $e) {
             return new Response(json_encode([
                 'success' => 'unsuccess',
-                'text' => $this->trans('An error occurred: %error%', ['%error%' => $e->getMessage()], 'Modules.Creditjet.Admin')
+                'text' => $this->trans('An error occurred: %error%', 'Modules.Creditjet.Admin', ['%error%' => $e->getMessage()])
             ]), 200, ['Content-Type' => 'application/json']);
         }
     }

@@ -17,7 +17,7 @@ class CreditJetConfigurationController extends PrestaShopAdminController
     public function __construct(
         private readonly Handler $configurationFormHandler
     ) {
-        // empty
+        // empty constructor
     }
 
     public function index(Request $request): Response
@@ -29,16 +29,16 @@ class CreditJetConfigurationController extends PrestaShopAdminController
             $errors = $this->configurationFormHandler->save($textForm->getData());
 
             if (empty($errors)) {
-                $this->addFlash('success', $this->trans('Successful update', [], 'Modules.Creditjet.Admin'));
-                return $this->redirectToRoute('creditjet_configuration');
+                $this->addFlash('success', $this->trans('Successful update', 'Modules.Creditjet.Admin'));
+                return $this->redirectToRoute('credit_jet_configuration_form');
             }
 
             $this->flashErrors($errors);
         }
 
         $context = Context::getContext();
-        $link_to_create_schema_creditjet = $this->generateUrl('credit_jet_create_schema');
-        $link_to_delete_schema_creditjet = $this->generateUrl('credit_jet_delete_schema');
+        $link_to_create_schema_creditjet = $context->link->getModuleLink('creditjet', 'createschema', []);
+        $link_to_delete_schema_creditjet = $context->link->getModuleLink('creditjet', 'deleteschema', []);
         $creditjet_schemes = $this->getAllJetKopRows();
 
         return $this->render('@Modules/creditjet/views/templates/admin/form.html.twig', [

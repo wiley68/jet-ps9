@@ -21,12 +21,17 @@ if (file_exists($autoloadPath)) {
 
 use PrestaShop\PrestaShop\Adapter\Module\Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 
 /**
  * CreditJet Payment Module for PrestaShop 9.x
  * PB Personal Finance Credit Calculator
+ *
+ * @property int $is_eu_compatible
+ * @property array|string $currencies
+ * @property string $currencies_mode
  */
-class CreditJet extends PaymentModule
+class Creditjet extends PaymentModule
 {
     const HOOKS = [
         'ActionFrontControllerSetMedia'
@@ -41,15 +46,25 @@ class CreditJet extends PaymentModule
         $this->tab = 'payments_gateways';
         $this->version = '1.8.0';
         $this->author = 'Ilko Ivanov';
-        $this->need_instance = 1;
         $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => '9.99.99'];
         $this->bootstrap = true;
+        $this->is_eu_compatible = 1;
+        $this->currencies = ['EUR', 'BGN'];
+        $this->currencies_mode = 'checkbox';
 
         parent::__construct();
 
         $this->displayName = $this->l('PB Personal Finance');
         $this->description = $this->l('Allows your customers to purchase goods on installments with PB Personal Finance');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
+
+        // Check if required currencies (EUR, BGN) are active in the system
+        $eurCurrency = Currency::getIdByIsoCode('EUR');
+        $bgnCurrency = Currency::getIdByIsoCode('BGN');
+
+        if ((!$eurCurrency && !$bgnCurrency) && $this->active) {
+            $this->warning = $this->trans('EUR or BGN currency must be enabled in the system.', 'Modules.Creditjet.Admin');
+        }
 
         if (!Configuration::get('CREDITJET_NAME')) {
             $this->warning = $this->l('No merchant ID provided');
@@ -151,10 +166,10 @@ class CreditJet extends PaymentModule
 
     public function getContent(): string
     {
-        // Redirect to the new Symfony-based configuration page
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true, [
-            'configure' => 'creditjet'
-        ]));
+        $router = SymfonyContainer::getInstance()->get('router');
+        $url = $router->generate('credit_jet_configuration_form');
+
+        Tools::redirectAdmin($url);
         return '';
     }
 

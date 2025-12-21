@@ -237,13 +237,36 @@ namespace Symfony\Component\DependencyInjection {
     }
 }
 
+// PrestaShop Adapters
+namespace PrestaShop\PrestaShop\Adapter {
+
+    class SymfonyContainer
+    {
+        public static function getInstance()
+        {
+            return new self();
+        }
+
+        public function get(string $service)
+        {
+            // Return a mock router object
+            return new class {
+                public function generate(string $route, array $params = []): string
+                {
+                    return '';
+                }
+            };
+        }
+    }
+}
+
 namespace PrestaShopBundle\Form\Admin\Type {
 
     class TranslatorAwareType extends \Symfony\Component\Form\AbstractType
     {
         public function buildForm(\Symfony\Component\Form\FormBuilderInterface $builder, array $options): void {}
         public function configureOptions(\Symfony\Component\OptionsResolver\OptionsResolver $resolver): void {}
-        public function trans(string $id, array $parameters = [], string $domain = null): string
+        public function trans(string $id, string $domain, array $parameters = []): string
         {
             return $id;
         }
@@ -292,7 +315,7 @@ namespace PrestaShopBundle\Controller\Admin {
 
         public function flashErrors(array $errors): void {}
 
-        public function trans(string $id, array $parameters = [], string $domain = null): string
+        public function trans(string $id, string $domain, array $parameters = []): string
         {
             return $id;
         }
@@ -442,6 +465,26 @@ namespace {
         }
     }
 
+    // Symfony Container
+    class SymfonyContainer
+    {
+        public static function getInstance()
+        {
+            return new self();
+        }
+
+        public function get(string $service)
+        {
+            // Return a mock router object
+            return new class {
+                public function generate(string $route, array $params = []): string
+                {
+                    return '';
+                }
+            };
+        }
+    }
+
     class ObjectModel
     {
         public const TYPE_INT = 1;
@@ -522,6 +565,7 @@ namespace {
         public $description;
         public $confirmUninstall;
         public $warning;
+        public $active;
         public $context;
         public $smarty;
 
@@ -550,6 +594,10 @@ namespace {
         {
             return $string;
         }
+        public function trans(string $id, string $domain, array $parameters = []): string
+        {
+            return $id;
+        }
         public function get(string $service)
         {
             if ($service === 'router') {
@@ -569,6 +617,10 @@ namespace {
 
     class PaymentModule extends Module
     {
+        public $is_eu_compatible;
+        public $currencies;
+        public $currencies_mode;
+
         public function checkCurrency($currency): bool
         {
             return true;
@@ -712,6 +764,11 @@ namespace {
         public $conversion_rate;
         public $deleted;
         public $active;
+
+        public static function getIdByIsoCode(string $isoCode): int
+        {
+            return 0;
+        }
     }
 
     class Country
