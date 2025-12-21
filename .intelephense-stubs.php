@@ -223,6 +223,11 @@ namespace PrestaShop\PrestaShop\Core\Form {
         {
             return [];
         }
+
+        public function fetch(string $template): string
+        {
+            return '';
+        }
     }
 }
 
@@ -492,6 +497,19 @@ namespace {
         }
     }
 
+    class Product extends ObjectModel
+    {
+        public $id;
+        public $name;
+        public $price;
+        public $active;
+
+        public static function getPriceStatic(int $id_product, bool $tax = true, int $id_product_attribute = null, int $decimals = 6): float
+        {
+            return 0.0;
+        }
+    }
+
     class ObjectModel
     {
         public const TYPE_INT = 1;
@@ -632,6 +650,11 @@ namespace {
         {
             return true;
         }
+
+        public function fetch(string $template): string
+        {
+            return '';
+        }
     }
 
     class PaymentOption
@@ -743,6 +766,10 @@ namespace {
             return '';
         }
         public function getAdminLink(string $controller, bool $with_token = true, array $params = []): string
+        {
+            return '';
+        }
+        public function getBaseLink(int $id_shop = null, string $ssl = null): string
         {
             return '';
         }

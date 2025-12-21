@@ -14,6 +14,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// Module constants are now defined as class constants above
+
 $autoloadPath = __DIR__ . '/vendor/autoload.php';
 if (file_exists($autoloadPath)) {
     require_once $autoloadPath;
@@ -33,8 +35,27 @@ use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
  */
 class Creditjet extends PaymentModule
 {
+    // Module constants
+    const JET_MINPRICE = 150.00;
+    const JET_MIN_250 = 250.00;
+    const JET_MIN_250_EUR = 125.00;
+    const JETCREDIT_FINANCIAL_MAX_ITERATIONS = 128;
+    const JETCREDIT_FINANCIAL_PRECISION = 1.0e-08;
+
+    /**
+     * Check if current user is on mobile device
+     *
+     * @return bool True if mobile device detected
+     */
+    public static function isMobileDevice(): bool
+    {
+        $useragent = array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        return preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $useragent)
+            || preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i', substr($useragent, 0, 4));
+    }
     const HOOKS = [
-        'ActionFrontControllerSetMedia'
+        'ActionFrontControllerSetMedia',
+        'displayProductAdditionalInfo'
     ];
 
     /**
@@ -175,6 +196,156 @@ class Creditjet extends PaymentModule
 
     public function hookActionFrontControllerSetMedia($params)
     {
-        // Load assets only on your BO pages or specific front pages if needed
+        if ('product' === $this->context->controller->php_self) {
+            $this->context->controller->registerJavascript(
+                'module-creditjet-product-js',
+                'modules/' . $this->name . '/js/creditjet_product.js',
+                [
+                    'priority' => 200,
+                    'attribute' => 'async',
+                    'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/js/creditjet_product.js')
+                ]
+            );
+            $this->context->controller->registerStylesheet(
+                'module-creditjet-product-css',
+                'modules/' . $this->name . '/css/creditjet_product.css',
+                [
+                    'media' => 'all',
+                    'priority' => 200,
+                    'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/css/creditjet_product.css')
+                ]
+            );
+        }
+    }
+
+    public function hookDisplayProductAdditionalInfo($params)
+    {
+        // Validate params
+        if (!isset($params['product']) || !$params['product']) {
+            return null;
+        }
+
+        $jet_id_product = (int) $params['product']->id;
+        $jet_price = (float)Product::getPriceStatic($jet_id_product, true);
+        $jet_price_before = $jet_price;
+
+        // Validate currency context
+        if (!isset($this->context->currency) || !$this->context->currency) {
+            return null;
+        }
+
+        $jet_currency_code = $this->context->currency->iso_code;
+        if ($jet_currency_code != 'EUR' && $jet_currency_code != 'BGN') {
+            return null;
+        }
+
+        $jet_status = (int)Configuration::get('JET_STATUS_IN');
+        if ($jet_status == 0) {
+            return null;
+        }
+
+        $jet_eur = (int)Configuration::get("JET_EUR");
+        $jet_sign = 'лв.';
+        $jet_sign_second = 'евро';
+        $jet_min_250 = self::JET_MIN_250;
+
+        switch ($jet_eur) {
+            case 0:
+                $jet_sign = 'лв.';
+                $jet_sign_second = '';
+                break;
+            case 1:
+                if ($jet_currency_code == "EUR") {
+                    $jet_price = $jet_price * 1.95583;
+                }
+                $jet_sign = 'лв.';
+                $jet_sign_second = 'евро';
+                break;
+            case 2:
+                if ($jet_currency_code == "BGN") {
+                    $jet_price = $jet_price / 1.95583;
+                }
+                $jet_sign = 'евро';
+                $jet_sign_second = 'лв.';
+                $jet_min_250 = self::JET_MIN_250_EUR;
+                break;
+            case 3:
+                if ($jet_currency_code == "BGN") {
+                    $jet_price = $jet_price / 1.95583;
+                }
+                $jet_sign = 'евро';
+                $jet_sign_second = '';
+                $jet_min_250 = self::JET_MIN_250_EUR;
+                break;
+        }
+
+        $jet_gap = (int)Configuration::get("JET_GAP");
+        $zaiavka1jet_text = Configuration::get("JET_Z1");
+        $jet_vnoski_default = (int)Configuration::get("JET_VNOSKI_DEFAULT");
+        if ($jet_price < $jet_min_250) {
+            $jet_vnoski = '9';
+        } else {
+            $jet_vnoski = $jet_vnoski_default;
+        }
+
+        $jet_card_in = (int)Configuration::get("JET_CARD_IN");
+        $is_vnoska = (int)Configuration::get("JET_VNOSKA");
+
+        $jet_name = "";
+        $jet_lastname = "";
+        $jet_email = "";
+        $jet_phone = "";
+        $jetCustomer = $this->context->customer;
+        if ($jetCustomer->isLogged()) {
+            $jet_name = $jetCustomer->firstname;
+            $jet_lastname = $jetCustomer->lastname;
+            $jet_email = $jetCustomer->email;
+            $jet_phone = $jetCustomer->getAddresses($this->context->language->id)[0]['phone'];
+        }
+
+        if (self::isMobileDevice()) {
+            $jet_PopUp_Detailed_v1 = "jetm_PopUp_Detailed_v1";
+            $jet_Mask = "jetm_Mask";
+            $jet_column_left = "jetm_column_left";
+            $jet_column_right = "jetm_column_right";
+            $obshto_credit_text = 'Общо кредит';
+            $obshto_plashtania = 'Общо плащания';
+            $modalpayment_jet = 'modalpayment_jetm';
+        } else {
+            $jet_PopUp_Detailed_v1 = "jet_PopUp_Detailed_v1";
+            $jet_Mask = "jet_Mask";
+            $jet_column_left = "jet_column_left";
+            $jet_column_right = "jet_column_right";
+            $obshto_credit_text = 'Общ размер на кредита';
+            $obshto_plashtania = 'Обща стойност на плащанията';
+            $modalpayment_jet = 'modalpayment_jet';
+        }
+
+        $this->context->smarty->assign([
+            'modules_dir' => $this->context->link->getBaseLink() . 'modules/',
+            'jet_gap' => $jet_gap,
+            'jet_price' => number_format($jet_price_before, 2, '.', ''),
+            'jet_card_in' => $jet_card_in,
+            'zaiavka1jet_text' => $zaiavka1jet_text,
+            'is_vnoska' => $is_vnoska,
+            'jet_sign_second' => $jet_sign_second,
+            'jet_sign' => $jet_sign,
+            'jet_id_product' => $jet_id_product,
+            'modalpayment_jet' => $modalpayment_jet,
+            'jet_PopUp_Detailed_v1' => $jet_PopUp_Detailed_v1,
+            'jet_Mask' => $jet_Mask,
+            'jet_column_left' => $jet_column_left,
+            'jet_column_right' => $jet_column_right,
+            'obshto_credit_text' => $obshto_credit_text,
+            'obshto_plashtania' => $obshto_plashtania,
+            'jet_eur' => $jet_eur,
+            'jet_vnoski' => $jet_vnoski,
+            'jet_name' => $jet_name,
+            'jet_lastname' => $jet_lastname,
+            'jet_email' => $jet_email,
+            'jet_phone' => $jet_phone
+        ]);
+
+        return $this->fetch('module:creditjet/views/templates/hook/creditjet.tpl');
     }
 }
