@@ -3,118 +3,131 @@
 {% form_theme creditJetConfigurationForm '@PrestaShop/Admin/TwigTemplateForm/prestashop_ui_kit.html.twig' %}
 
 {% block content %}
-	{{ form_start(creditJetConfigurationForm) }}
-	<div class="card">
-		<h3 class="card-header">
-			<i class="material-icons">settings</i> ПБ Лични Финанси
-		</h3>
-		<div class="card-body">
-			<div class="form-wrapper">
-				{{ form_widget(creditJetConfigurationForm) }}
-			</div>
-		</div>
-		<div class="card-footer">
-			<div class="d-flex justify-content-end">
-				<button class="btn btn-primary float-right" id="save-button">
-					Запиши
-				</button>
-			</div>
-		</div>
-	</div>
-	{{ form_end(creditJetConfigurationForm) }}
-	<input type="hidden" id="link_to_create_schema_creditjet" value="{{ link_to_create_schema_creditjet }}" >
-	<input type="hidden" id="link_to_delete_schema_creditjet" value="{{ link_to_delete_schema_creditjet }}" >
-	<div class="card">
-		<h3 class="card-header">
-			<i class="material-icons">settings</i> Форма за въвеждане на лихвени филтри
-		</h3>
-		<div class="card-body">
-			<div class="form-wrapper">
-				<div class="form-group row">
-					<div class="col-sm-2">Продуктов ID номер. Идентификатора на даден продукт в системата на PrestaShop. Id #. Филтъра действа за всички продукти ако използвате глобалния символ *:</div>
-					<div class="col-sm-2">Избери процент оскъпяване. Избирате процента оскъпяване който да действа за филтъра. Ако изберете "Не показвай бутона", бутона няма да се показва в продуктовата страница.:</div>
-					<div class="col-sm-2">За кои месечни вноски действа филтъра. За разделител между цифрите за месеци се използва подчертаващо тире.:</div>
-					<div class="col-sm-2">Цена на продукта над която да се задейства този филтър. Ако оставите празно филтъра ще действа за всяка цена.:</div>
-					<div class="col-sm-2">Начало за действие на филтъра. Датата от която започва да действа този филтър.:</div>
-					<div class="col-sm-2">Край за действие на филтъра. Датата на която приклчва действието на филтъра.:</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-2">
-						<input type="text" id="jet_product_id" class="form-control" />
-					</div>
-					<div class="col-sm-2">
-						<select id="jet_product_percent" class="form-control">
-							<option value=-1.00>Не показвай бутона</option>
-							<option value=0.00 selected>0.00%</option>
-							<option value=0.80 >0.80%</option>
-							<option value=0.99 >0.99%</option>
-							<option value=1.00 >1.00%</option>
-							<option value=1.10 >1.10%</option>
-							<option value=1.20 >1.20%</option>
-							<option value=1.40 >1.40%</option>
-						</select>
-					</div>
-					<div class="col-sm-2">
-						<input type="text" id="jet_product_meseci" class="form-control" />
-					</div>
-					<div class="col-sm-2">
-						<input type="number" id="jet_product_price" class="form-control" value="0" />
-					</div>
-					<div class="col-sm-2">
-						<input type="date" id="jet_product_start" class="form-control" />
-					</div>
-					<div class="col-sm-2">
-						<input type="date" id="jet_product_end" class="form-control" />
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="card-footer">
-			<div class="d-flex justify-content-end">
-				<button type="button" class="btn btn-secondary float-right" onclick="create_creditjet_schema();"><i class="process-icon-save"></i> Добави</button>
-			</div>
-		</div>
-	</div>
-	<div class="card">
-		<h3 class="card-header">
-			<i class="material-icons">settings</i> Съществуващи филтри
-		</h3>
-		<div class="card-body">
-			<div class="form-wrapper">
-				<div class="form-group row">
-					<div class="col-sm-1">Продукт ID</div>
-					<div class="col-sm-2">Процент оскъпяване</div>
-					<div class="col-sm-2">Месечни вноски</div>
-					<div class="col-sm-2">Цена на продуктa</div>
-					<div class="col-sm-2">Начало</div>
-					<div class="col-sm-2">Край</div>
-					<div class="col-sm-1"></div>
-				</div>
-				{% if creditjet_schemes is not empty %}
-					{% for scheme in creditjet_schemes %}
-						<div class="form-group row">
-							<div class="col-sm-1"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_id'] }}" /></div>
-							{% if scheme['jet_product_percent'] == -1 %}
-							<div class="col-sm-2"><input type="text" disabled class="form-control" value="Не показвай бутона" /></div>
-							{% else %}
-							<div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_percent'] }}" /></div>
-							{% endif %}
-							<div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_meseci'] }}" /></div>
-							<div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_price'] }}" /></div>
-							<div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_start'] }}" /></div>
-							<div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_end'] }}" /></div>
-							<div class="col-sm-1">
-								<button type="button" class="btn btn-danger" onclick="delete_creditjet_schema('{{ scheme.jet_product_id }}');"><i class="process-icon-delete"></i> Изтрий</button>
-							</div>
-						</div>
-					{% endfor %}
-				{% endif %}
-			</div>
-		</div>
-	</div>
+    {{ form_start(creditJetConfigurationForm) }}
+    <div class="card">
+        <h3 class="card-header">
+            <i class="material-icons">settings</i> ПБ Лични Финанси
+        </h3>
+        <div class="card-body">
+            <div class="form-wrapper">
+                {{ form_widget(creditJetConfigurationForm) }}
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary float-right" id="save-button">
+                    Запиши
+                </button>
+            </div>
+        </div>
+    </div>
+    {{ form_end(creditJetConfigurationForm) }}
+    <div class="card">
+        <h3 class="card-header">
+            <i class="material-icons">settings</i> Форма за въвеждане на лихвени филтри
+        </h3>
+        <div class="card-body">
+            <div class="form-wrapper">
+                <div class="form-group row">
+                    <div class="col-sm-2">Продуктов ID номер. Идентификатора на даден продукт в системата на PrestaShop. Id #. Филтъра действа за всички продукти ако използвате глобалния символ *:</div>
+                    <div class="col-sm-2">Избери процент оскъпяване. Избирате процента оскъпяване който да действа за филтъра. Ако изберете "Не показвай бутона", бутона няма да се показва в продуктовата страница.:</div>
+                    <div class="col-sm-2">За кои месечни вноски действа филтъра. За разделител между цифрите за месеци се използва подчертаващо тире.:</div>
+                    <div class="col-sm-2">Цена на продукта над която да се задейства този филтър. Ако оставите празно филтъра ще действа за всяка цена.:</div>
+                    <div class="col-sm-2">Начало за действие на филтъра. Датата от която започва да действа този филтър.:</div>
+                    <div class="col-sm-2">Край за действие на филтъра. Датата на която приклчва действието на филтъра.:</div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-2">
+                        <input type="text" id="jet_product_id" class="form-control" />
+                    </div>
+                    <div class="col-sm-2">
+                        <select id="jet_product_percent" class="form-control">
+                            <option value=-1.00>Не показвай бутона</option>
+                            <option value=0.00 selected>0.00%</option>
+                            <option value=0.80 >0.80%</option>
+                            <option value=0.99 >0.99%</option>
+                            <option value=1.00 >1.00%</option>
+                            <option value=1.10 >1.10%</option>
+                            <option value=1.20 >1.20%</option>
+                            <option value=1.40 >1.40%</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" id="jet_product_meseci" class="form-control" />
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="number" id="jet_product_price" class="form-control" value="0" />
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="date" id="jet_product_start" class="form-control" />
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="date" id="jet_product_end" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary float-right" onclick="create_creditjet_schema();"><i class="process-icon-save"></i> Добави</button>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h3 class="card-header">
+            <i class="material-icons">settings</i> Съществуващи филтри
+        </h3>
+        <div class="card-body">
+            <div class="form-wrapper">
+                <div class="form-group row">
+                    <div class="col-sm-1">Продукт ID</div>
+                    <div class="col-sm-2">Процент оскъпяване</div>
+                    <div class="col-sm-2">Месечни вноски</div>
+                    <div class="col-sm-2">Цена на продуктa</div>
+                    <div class="col-sm-2">Начало</div>
+                    <div class="col-sm-2">Край</div>
+                    <div class="col-sm-1"></div>
+                </div>
+                {% if creditjet_schemes is not empty %}
+                    {% for scheme in creditjet_schemes %}
+                        <div class="form-group row">
+                            <div class="col-sm-1"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_id'] }}" /></div>
+                            {% if scheme['jet_product_percent'] == -1 %}
+                            <div class="col-sm-2"><input type="text" disabled class="form-control" value="Не показвай бутона" /></div>
+                            {% else %}
+                            <div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_percent'] }}" /></div>
+                            {% endif %}
+                            <div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_meseci'] }}" /></div>
+                            <div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_price'] }}" /></div>
+                            <div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_start'] }}" /></div>
+                            <div class="col-sm-2"><input type="text" disabled class="form-control" value="{{ scheme['jet_product_end'] }}" /></div>
+                            <div class="col-sm-1">
+                                <button type="button" class="btn btn-danger" onclick="delete_creditjet_schema('{{ scheme.jet_product_id }}');"><i class="process-icon-delete"></i> Изтрий</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
-	{{ parent() }}
-	<script src="{{ asset('../modules/creditjet/views/js/creditjetForms.js') }}"></script>
+    {{ parent() }}
+    <script>
+        // Translated messages for JavaScript
+        window.creditjetTranslations = {
+            emptyFields: '{{ "All fields are required"|trans([], "Modules.Creditjet.Admin") }}',
+            deleteSuccess: '{{ "Credit scheme deleted successfully"|trans([], "Modules.Creditjet.Admin") }}',
+            ajaxError: '{{ "AJAX error"|trans([], "Modules.Creditjet.Admin") }}',
+            createSuccess: '{{ "Credit scheme created successfully"|trans([], "Modules.Creditjet.Admin") }}',
+            createError: '{{ "Failed to create credit scheme"|trans([], "Modules.Creditjet.Admin") }}',
+            deleteError: '{{ "Failed to delete credit scheme"|trans([], "Modules.Creditjet.Admin") }}'
+        };
+
+        window.creditjetCreateSchemaUrl = {{ link_to_create_schema_creditjet|json_encode|raw }};
+        window.creditjetDeleteSchemaUrl = {{ link_to_delete_schema_creditjet|json_encode|raw }};
+    </script>
+
+    <script src="{{ constant('__PS_BASE_URI__') }}modules/creditjet/views/js/creditjetForms.js?v={{ js_version }}"></script>
 {% endblock %}

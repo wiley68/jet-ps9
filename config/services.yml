@@ -41,14 +41,12 @@ services:
       - '@prestashop.module.creditjet.creditjet_configuration_form_handler'
     tags: ['controller.service_arguments']
 
-  # AJAX controller for creating credit schemes
-  # prestashop.module.creditjet.controller.create_schema:
-  #   class: PrestaShop\Module\CreditJet\Controller\CreateSchemaController
-  #   public: true
-  #   tags: ['controller.service_arguments']
+  prestashop.module.creditjet.controller.create_schema:
+    class: PrestaShop\Module\CreditJet\Controller\CreateSchemaController
+    public: true
+    tags: ['controller.service_arguments']
 
-  # AJAX controller for deleting credit schemes
-  # prestashop.module.creditjet.controller.delete_schema:
-  #   class: PrestaShop\Module\CreditJet\Controller\DeleteSchemaController
-  #   public: true
-  #   tags: ['controller.service_arguments']
+  prestashop.module.creditjet.controller.delete_schema:
+    class: PrestaShop\Module\CreditJet\Controller\DeleteSchemaController
+    public: true
+    tags: ['controller.service_arguments']

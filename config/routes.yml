@@ -7,14 +7,18 @@ credit_jet_configuration_form:
     _legacy_link: AdminCreditJetConfiguration
 
 
-# credit_jet_create_schema:
-#   path: /creditjet/create-schema
-#   methods: [POST]
-#   defaults:
-#     _controller: prestashop.module.creditjet.controller.create_schema::create
+creditjet_admin_create_schema:
+  path: /creditjet/schema/create
+  methods: [POST]
+  defaults:
+    _controller: prestashop.module.creditjet.controller.create_schema::create
+    _legacy_controller: AdminCreditJetCreateSchema
+    _legacy_link: AdminCreditJetCreateSchema
 
-# credit_jet_delete_schema:
-#   path: /creditjet/delete-schema
-#   methods: [POST]
-#   defaults:
-#     _controller: prestashop.module.creditjet.controller.delete_schema::delete
+creditjet_admin_delete_schema:
+  path: /creditjet/schema/delete
+  methods: [POST]
+  defaults:
+    _controller: prestashop.module.creditjet.controller.delete_schema::delete
+    _legacy_controller: AdminCreditJetDeleteSchema
+    _legacy_link: AdminCreditJetDeleteSchema

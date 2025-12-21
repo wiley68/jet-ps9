@@ -20,6 +20,11 @@ namespace Symfony\Component\HttpFoundation {
         {
             return 'GET';
         }
+
+        public function getBasePath(): string
+        {
+            return '';
+        }
         public function get(string $key, $default = null)
         {
             return $default;
@@ -319,6 +324,8 @@ namespace PrestaShopBundle\Controller\Admin {
         {
             return $id;
         }
+
+        public function addJs(string $path): void {}
 
         public function get(string $service)
         {

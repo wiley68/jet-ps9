@@ -7,7 +7,7 @@ const create_creditjet_schema = () => {
         $("#jet_product_end").val() !== ''
     ) {
         $.ajax({
-            url: $("#link_to_create_schema_creditjet").val(),
+            url: window.creditjetCreateSchemaUrl,
             type: 'POST',
             dataType: 'json',
             data: {
@@ -20,21 +20,25 @@ const create_creditjet_schema = () => {
             },
             success: function (json) {
                 if (json.success == 'success') {
-                    alert(json.text);
+                    showSuccessMessage(json.text || window.creditjetTranslations.createSuccess);
                     window.location.reload();
                 } else {
-                    alert(json.text);
+                    showErrorMessage(json.text || window.creditjetTranslations.createError);
                 }
+            },
+            error: function (xhr) {
+                console.log('AJAX error', xhr.status, xhr.responseText);
+                showErrorMessage(window.creditjetTranslations.ajaxError + ': ' + xhr.status);
             }
         });
     } else {
-        alert("Имате непопълнени полета!");
+        showErrorMessage(window.creditjetTranslations.emptyFields);
     }
 };
 
 const delete_creditjet_schema = (id) => {
     $.ajax({
-        url: $("#link_to_delete_schema_creditjet").val(),
+        url: window.creditjetDeleteSchemaUrl,
         type: 'POST',
         dataType: 'json',
         data: {
@@ -42,9 +46,15 @@ const delete_creditjet_schema = (id) => {
         },
         success: function (json) {
             if (json.success == 'success') {
-                alert("Успешно изтрихте филтъра.");
+                showSuccessMessage(json.text || window.creditjetTranslations.deleteSuccess);
                 window.location.reload();
+            } else {
+                showErrorMessage(json.text || window.creditjetTranslations.deleteError);
             }
+        },
+        error: function (xhr) {
+            console.log('AJAX error', xhr.status, xhr.responseText);
+            showErrorMessage('AJAX error: ' + xhr.status);
         }
     });
 }
