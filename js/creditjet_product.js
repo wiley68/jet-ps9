@@ -148,7 +148,7 @@ jQuery(document).ready(function ($) {
             $.ajax({
                 url:
                     prestashop.urls.base_url +
-                    'index.php?fc=module&module=creditjet&controller=JetCalculate',
+                    'index.php?fc=module&module=creditjet&controller=JetCalculate&jet_token=' + $('#jet_static_token').val(),
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -420,7 +420,7 @@ jQuery(document).ready(function ($) {
         $.ajax({
             url:
                 prestashop.urls.base_url +
-                'index.php?fc=module&module=creditjet&controller=JetSend',
+                'index.php?fc=module&module=creditjet&controller=JetSend&jet_token=' + $('#jet_static_token').val(),
             type: 'POST',
             dataType: 'json',
             data: {

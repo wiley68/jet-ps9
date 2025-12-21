@@ -177,7 +177,104 @@ namespace {
 
     // Core classes
 
-    // Core classes
+    // Global namespace classes
+    class Cart extends ObjectModel
+    {
+        public const BOTH = 1;
+
+        public $id;
+        public $id_shop;
+        public $id_shop_group;
+        public $id_carrier;
+        public $delivery_option;
+        public $id_lang;
+        public $id_address_delivery;
+        public $id_address_invoice;
+        public $id_currency;
+        public $id_customer;
+        public $id_guest;
+        public $secure_key;
+        public $recyclable;
+        public $gift;
+        public $gift_message;
+        public $mobile_theme;
+        public $allow_seperated_package;
+        public $date_add;
+        public $date_upd;
+
+        public function add($auto_date = true, $null_values = false): bool
+        {
+            return true;
+        }
+
+        public function updateQty(int $quantity, int $id_product, int $id_product_attribute = null, int $id_customization = null, string $operator = 'up'): bool
+        {
+            return true;
+        }
+
+        public function getOrderTotal(bool $with_taxes = true, int $type = 3, array $products = null, int $id_carrier = null, bool $use_cache = true): float
+        {
+            return 0.0;
+        }
+
+        public function getProducts(bool $refresh = false): array
+        {
+            return [];
+        }
+    }
+
+    class Category extends ObjectModel
+    {
+        public $id;
+        public $name;
+        public $active;
+    }
+
+    class Mail
+    {
+        public static function Send(int $id_lang, string $template, string $subject, array $template_vars, string $to, string $to_name = null, string $from = null, string $from_name = null, array $file_attachment = null, array $smtp_options = null, string $dir_mail = null, bool $die = true, int $id_shop = null, array $bcc = null, string $reply_to = null, string $reply_to_name = null): bool
+        {
+            return true;
+        }
+    }
+
+    class Order extends ObjectModel
+    {
+        public static function getByCartId(int $id_cart): ?Order
+        {
+            return null;
+        }
+    }
+
+    class Currency extends ObjectModel
+    {
+        public $id;
+        public $name;
+        public $iso_code;
+        public $conversion_rate;
+
+        public static function getIdByIsoCode(string $iso_code): ?int
+        {
+            return null;
+        }
+    }
+
+    class Language extends ObjectModel
+    {
+        public $id;
+        public $name;
+        public $iso_code;
+        public $active;
+    }
+
+    class Country extends ObjectModel
+    {
+        public $id;
+        public $name;
+        public $iso_code;
+        public $active;
+    }
+
     // PrestaShop Form Types
 }
 
@@ -227,11 +324,6 @@ namespace PrestaShop\PrestaShop\Core\Form {
         public function fetch(string $template): string
         {
             return '';
-        }
-
-        public static function getInstanceByName(string $module_name): ?\Module
-        {
-            return null;
         }
     }
 }
@@ -508,6 +600,7 @@ namespace {
         public $name;
         public $price;
         public $active;
+        public $id_category_default;
 
         public static function getPriceStatic(int $id_product, bool $tax = true, int $id_product_attribute = null, int $decimals = 6): float
         {
@@ -598,6 +691,11 @@ namespace {
         public $active;
         public $context;
         public $smarty;
+
+        public static function getInstanceByName(string $module_name)
+        {
+            return null;
+        }
 
         public function __construct() {}
         public function install(): bool
@@ -728,6 +826,10 @@ namespace {
             return '';
         }
         public static function redirectAdmin(string $url): void {}
+        public static function getToken(bool $static = true): string
+        {
+            return '';
+        }
     }
 
     class Configuration
@@ -786,186 +888,6 @@ namespace {
         public $id;
     }
 
-    class Language
-    {
-        public $id;
-        public $iso_code;
-        public $name;
-    }
-
-    class Currency
-    {
-        public $id;
-        public $name;
-        public $iso_code;
-        public $numeric_iso_code;
-        public $symbol;
-        public $conversion_rate;
-        public $deleted;
-        public $active;
-
-        public static function getIdByIsoCode(string $isoCode): int
-        {
-            return 0;
-        }
-    }
-
-    class Country
-    {
-        public $id;
-        public $id_zone;
-        public $id_currency;
-        public $iso_code;
-        public $name;
-        public $active;
-    }
-
-    class Customer
-    {
-        public $id;
-        public $id_shop;
-        public $id_shop_group;
-        public $id_default_group;
-        public $id_lang;
-        public $id_risk;
-        public $id_gender;
-        public $firstname;
-        public $lastname;
-        public $email;
-        public $passwd;
-        public $birthday;
-        public $newsletter;
-        public $ip_registration_newsletter;
-        public $newsletter_date_add;
-        public $optin;
-        public $website;
-        public $company;
-        public $siret;
-        public $ape;
-        public $outstanding_allow_amount;
-        public $show_public_prices;
-        public $id_shop_customer;
-        public $max_payment_days;
-        public $secure_key;
-        public $note;
-        public $active;
-        public $is_guest;
-        public $deleted;
-        public $date_add;
-        public $date_upd;
-    }
-
-    class Cart
-    {
-        public $id;
-        public $id_shop;
-        public $id_shop_group;
-        public $id_carrier;
-        public $delivery_option;
-        public $id_lang;
-        public $id_address_delivery;
-        public $id_address_invoice;
-        public $id_currency;
-        public $id_customer;
-        public $id_guest;
-        public $secure_key;
-        public $recyclable;
-        public $gift;
-        public $gift_message;
-        public $mobile_theme;
-        public $allow_seperated_package;
-        public $date_add;
-        public $date_upd;
-
-        public function getOrderTotal(bool $with_taxes = true, int $type = 3, array $products = null, int $id_carrier = null, bool $use_cache = true): float
-        {
-            return 0.0;
-        }
-        public function getProducts(bool $refresh = false): array
-        {
-            return [];
-        }
-    }
-
-    class Order
-    {
-        public $id;
-        public $reference;
-        public $id_shop;
-        public $id_shop_group;
-        public $id_carrier;
-        public $id_lang;
-        public $id_customer;
-        public $id_cart;
-        public $id_currency;
-        public $id_address_delivery;
-        public $id_address_invoice;
-        public $current_state;
-        public $secure_key;
-        public $payment;
-        public $module;
-        public $recyclable;
-        public $gift;
-        public $gift_message;
-        public $mobile_theme;
-        public $total_discounts;
-        public $total_discounts_tax_incl;
-        public $total_discounts_tax_excl;
-        public $total_paid;
-        public $total_paid_tax_incl;
-        public $total_paid_tax_excl;
-        public $total_paid_real;
-        public $total_products;
-        public $total_products_wt;
-        public $total_shipping;
-        public $total_shipping_tax_incl;
-        public $total_shipping_tax_excl;
-        public $carrier_tax_rate;
-        public $total_wrapping;
-        public $total_wrapping_tax_incl;
-        public $total_wrapping_tax_excl;
-        public $invoice_number;
-        public $delivery_number;
-        public $invoice_date;
-        public $delivery_date;
-        public $valid;
-        public $date_add;
-        public $date_upd;
-
-        public function getCurrentState(): int
-        {
-            return 0;
-        }
-    }
-
-    class Employee
-    {
-        public $id;
-        public $id_profile;
-        public $id_lang;
-        public $lastname;
-        public $firstname;
-        public $email;
-        public $passwd;
-        public $active;
-        public $optin;
-        public $id_last_passwd_gen;
-        public $last_passwd_gen;
-        public $stats_date_from;
-        public $stats_date_to;
-        public $stats_compare_from;
-        public $stats_compare_to;
-        public $stats_compare_option;
-        public $preselect_date_range;
-        public $bo_color;
-        public $bo_theme;
-        public $bo_css;
-        public $default_tab;
-        public $bo_width;
-        public $bo_menu;
-        public $date_add;
-        public $date_upd;
-    }
 
     class Media
     {

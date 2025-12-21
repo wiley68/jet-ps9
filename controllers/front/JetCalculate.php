@@ -1,7 +1,6 @@
 <?php
 
 use PrestaShop\Module\CreditJet\Model\JetCreditModel;
-use Creditjet;
 
 /**
  * @method static \Module getInstanceByName(string $module_name)
@@ -10,19 +9,25 @@ class CreditJetJetCalculateModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
-        parent::initContent();
-
         // Security check - only allow AJAX requests
         if (!$this->isXmlHttpRequest()) {
             die('Forbidden - AJAX requests only');
         }
+
+        // CSRF protection - use general token for AJAX
+        $csrf_token = \Tools::getToken();
+        if (!Tools::isSubmit('jet_token') || Tools::getValue('jet_token') !== $csrf_token) {
+            die('CSRF protection - invalid token');
+        }
+
+        parent::initContent();
 
         $json = [];
 
         $jet_priceall = filter_var(Tools::getValue('jet_priceall', 0.00), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $jet_parva = filter_var(Tools::getValue('jet_parva', 0.00), FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $jet_vnoski = filter_var(Tools::getValue('jet_vnoski', (int)Configuration::get("JET_VNOSKI_DEFAULT")), FILTER_SANITIZE_NUMBER_INT);
-        $jet_product_id = filter_var(Tools::getValue('jet_product_id', ''), FILTER_SANITIZE_STRING);
+        $jet_product_id = filter_var(Tools::getValue('jet_product_id', ''), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         $jet_card_in = (int)Configuration::get("JET_CARD_IN");
 

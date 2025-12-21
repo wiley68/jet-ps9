@@ -323,6 +323,7 @@ class Creditjet extends PaymentModule
 
         $this->context->smarty->assign([
             'modules_dir' => $this->context->link->getBaseLink() . 'modules/',
+            'static_token' => \Tools::getToken(),
             'jet_gap' => $jet_gap,
             'jet_price' => number_format($jet_price_before, 2, '.', ''),
             'jet_card_in' => $jet_card_in,

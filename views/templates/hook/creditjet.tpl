@@ -2,6 +2,7 @@
     <input type="hidden" id="jet_price" value="{$jet_price}" />
     <input type="hidden" id="jet_product_id" value="{$jet_id_product}" />
     <input type="hidden" id="jet_card_in" value="{$jet_card_in}" />
+    <input type="hidden" id="jet_static_token" value="{$static_token}" />
 
     <div id="jet_alert_overlay" class="jet_alert_overlay"></div>
     <div id="jet_alert_box"></div>
