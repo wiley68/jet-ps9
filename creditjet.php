@@ -57,7 +57,8 @@ class Creditjet extends PaymentModule
     }
     const HOOKS = [
         'ActionFrontControllerSetMedia',
-        'displayProductAdditionalInfo'
+        'displayProductAdditionalInfo',
+        'displayShoppingCart'
     ];
 
     /**
@@ -219,6 +220,26 @@ class Creditjet extends PaymentModule
                 ]
             );
         }
+        if ('cart' === $this->context->controller->php_self) {
+            $this->context->controller->registerStylesheet(
+                'module-creditjet-cart-css',
+                'modules/' . $this->name . '/css/creditjet_cart.css',
+                [
+                    'media' => 'all',
+                    'priority' => 200,
+                    'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/css/creditjet_cart.css')
+                ]
+            );
+            $this->context->controller->registerJavascript(
+                'module-creditjet-cart-js',
+                'modules/' . $this->name . '/js/creditjet_cart.js',
+                [
+                    'priority' => 200,
+                    'attribute' => 'async',
+                    'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/js/creditjet_cart.js')
+                ]
+            );
+        }
     }
 
     public function hookDisplayProductAdditionalInfo($params)
@@ -351,5 +372,178 @@ class Creditjet extends PaymentModule
         ]);
 
         return $this->fetch('module:creditjet/views/templates/hook/creditjet.tpl');
+    }
+
+    public function hookDisplayShoppingCart($params)
+    {
+        // Validate currency context
+        if (!isset($this->context->currency) || !$this->context->currency) {
+            return null;
+        }
+
+        $jet_currency_code = $this->context->currency->iso_code;
+        if ($jet_currency_code != 'EUR' && $jet_currency_code != 'BGN') {
+            return null;
+        }
+
+        $jet_status = (int)Configuration::get('JET_STATUS_IN');
+        if ($jet_status == 0) {
+            return null;
+        }
+
+        $jet_cart_show = (int)Configuration::get("JET_CART_SHOW");
+        if ($jet_cart_show == 0) {
+            return null;
+        }
+
+        $zaiavka1jet_text = Configuration::get("JET_Z1");
+        $jet_card_in = (int)Configuration::get("JET_CARD_IN");
+        $is_vnoska = (int)Configuration::get("JET_VNOSKA");
+
+        $jet_products = $params['cart']->getProducts(true);
+        $jet_price = $params['cart']->getordertotal(true);
+        $jet_price_before = $jet_price;
+
+        $jet_eur = (int)Configuration::get("JET_EUR");
+        $jet_sign = 'лв.';
+        $jet_sign_second = 'евро';
+        $jet_min_250 = self::JET_MIN_250;
+
+        switch ($jet_eur) {
+            case 0:
+                $jet_sign = 'лв.';
+                $jet_sign_second = '';
+                break;
+            case 1:
+                if ($jet_currency_code == "EUR") {
+                    $jet_price = $jet_price * 1.95583;
+                }
+                $jet_sign = 'лв.';
+                $jet_sign_second = 'евро';
+                break;
+            case 2:
+                if ($jet_currency_code == "BGN") {
+                    $jet_price = $jet_price / 1.95583;
+                }
+                $jet_sign = 'евро';
+                $jet_sign_second = 'лв.';
+                $jet_min_250 = self::JET_MIN_250_EUR;
+                break;
+            case 3:
+                if ($jet_currency_code == "BGN") {
+                    $jet_price = $jet_price / 1.95583;
+                }
+                $jet_sign = 'евро';
+                $jet_sign_second = '';
+                $jet_min_250 = self::JET_MIN_250_EUR;
+                break;
+        }
+
+        $_minprice = (float)Configuration::get("JET_MINPRICE");
+        if ($jet_price < $_minprice) {
+            return null;
+        }
+
+        $jet_vnoski_default = (int)Configuration::get("JET_VNOSKI_DEFAULT");
+        if ($jet_price < $jet_min_250) {
+            $jet_vnoski = '9';
+        } else {
+            $jet_vnoski = $jet_vnoski_default;
+        }
+
+        $jet_name = "";
+        $jet_lastname = "";
+        $jet_email = "";
+        $jet_phone = "";
+        $jetCustomer = $this->context->customer;
+        if ($jetCustomer->isLogged()) {
+            $jet_name = $jetCustomer->firstname;
+            $jet_lastname = $jetCustomer->lastname;
+            $jet_email = $jetCustomer->email;
+            $jet_phone = $jetCustomer->getAddresses($this->context->language->id)[0]['phone'];
+        }
+
+        if (self::isMobileDevice()) {
+            $jet_PopUp_Detailed_v1 = "jetm_PopUp_Detailed_v1";
+            $jet_Mask = "jetm_Mask";
+            $jet_column_left = "jetm_column_left";
+            $jet_column_right = "jetm_column_right";
+            $obshto_credit_text = 'Общо кредит';
+            $obshto_plashtania = 'Общо плащания';
+            $modalpayment_jet = 'modalpayment_jetm';
+        } else {
+            $jet_PopUp_Detailed_v1 = "jet_PopUp_Detailed_v1";
+            $jet_Mask = "jet_Mask";
+            $jet_column_left = "jet_column_left";
+            $jet_column_right = "jet_column_right";
+            $obshto_credit_text = 'Общ размер на кредита';
+            $obshto_plashtania = 'Обща стойност на плащанията';
+            $modalpayment_jet = 'modalpayment_jet';
+        }
+
+        $jet_products_id = '';
+        $jet_products_qt = '';
+        $jet_products_pr = '';
+        $jet_products_ct = '';
+        $jet_products_vr = '';
+        foreach ($jet_products as $product) {
+            $jet_products_id .= $product['id_product'] . '_';
+            $jet_products_qt .= $product['cart_quantity'] . '_';
+            $jet_products_pr_current = (float)$product['price_wt'];
+            switch ($jet_eur) {
+                case 0:
+                    break;
+                case 1:
+                    if ($jet_currency_code == "EUR") {
+                        $jet_products_pr_current = $jet_products_pr_current * 1.95583;
+                    }
+                    break;
+                case 2:
+                case 3:
+                    if ($jet_currency_code == "BGN") {
+                        $jet_products_pr_current = $jet_products_pr_current / 1.95583;
+                    }
+                    break;
+            }
+            $jet_products_pr .= number_format($jet_products_pr_current, 2, ".", "") . '_';
+            $jet_products_ct .= $product['id_category_default'] . '_';
+            $jet_products_vr .= $product['id_product_attribute'] . '_';
+        }
+        $jet_products_id = substr($jet_products_id, 0, -1);
+        $jet_products_qt = substr($jet_products_qt, 0, -1);
+        $jet_products_pr = substr($jet_products_pr, 0, -1);
+        $jet_products_ct = substr($jet_products_ct, 0, -1);
+        $jet_products_vr = substr($jet_products_vr, 0, -1);
+
+        $this->context->smarty->assign([
+            'modules_dir' => $this->context->link->getBaseLink() . 'modules/',
+            'static_token' => \Tools::getToken(),
+            'jet_price' => number_format($jet_price_before, 2, '.', ''),
+            'jet_card_in' => $jet_card_in,
+            'jet_products_id' => $jet_products_id,
+            'jet_products_qt' => $jet_products_qt,
+            'jet_products_pr' => $jet_products_pr,
+            'jet_products_ct' => $jet_products_ct,
+            'jet_products_vr' => $jet_products_vr,
+            'zaiavka1jet_text' => $zaiavka1jet_text,
+            'is_vnoska' => $is_vnoska,
+            'jet_sign_second' => $jet_sign_second,
+            'jet_sign' => $jet_sign,
+            'modalpayment_jet' => $modalpayment_jet,
+            'jet_PopUp_Detailed_v1' => $jet_PopUp_Detailed_v1,
+            'jet_Mask' => $jet_Mask,
+            'jet_column_left' => $jet_column_left,
+            'jet_column_right' => $jet_column_right,
+            'jet_eur' => $jet_eur,
+            'jet_vnoski' => $jet_vnoski,
+            'obshto_credit_text' => $obshto_credit_text,
+            'obshto_plashtania' => $obshto_plashtania,
+            'jet_name' => $jet_name,
+            'jet_lastname' => $jet_lastname,
+            'jet_phone' => $jet_phone,
+            'jet_email' => $jet_email
+        ]);
+
+        return $this->fetch('module:creditjet/views/templates/hook/shoppingbag.tpl');
     }
 }
