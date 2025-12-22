@@ -8,35 +8,115 @@ use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
 use PrestaShop\PrestaShop\Core\ConfigurationInterface;
 
 /**
- * Configuration is used to save data to configuration table and retrieve from it.
+ * CreditJet Configuration Data Handler
+ *
+ * This class handles the persistence and retrieval of CreditJet module configuration settings.
+ * It manages all configuration keys used by the module, including credit settings, email configurations,
+ * interest rates, display options, and currency settings through PrestaShop's configuration system.
+ *
+ * @implements DataConfigurationInterface
  */
 final class CreditJetConfigurationDataConfiguration implements DataConfigurationInterface
 {
+    // Configuration keys for CreditJet module settings
+
+    /**
+     * Module enable/disable status
+     */
     public const JET_STATUS_IN = 'JET_STATUS_IN';
+
+    /**
+     * Email address for sending credit requests
+     */
     public const JET_EMAIL = 'JET_EMAIL';
+
+    /**
+     * Store identifier for credit requests
+     */
     public const JET_ID = 'JET_ID';
+
+    /**
+     * Interest rate percentage for regular payments
+     */
     public const JET_PURCENT = 'JET_PURCENT';
+
+    /**
+     * Default number of installments
+     */
     public const JET_VNOSKI_DEFAULT = 'JET_VNOSKI_DEFAULT';
+
+    /**
+     * Whether to show credit button in cart
+     */
     public const JET_CART_SHOW = 'JET_CART_SHOW';
+
+    /**
+     * Whether to enable card payment option
+     */
     public const JET_CARD_IN = 'JET_CARD_IN';
+
+    /**
+     * Interest rate percentage for card payments
+     */
     public const JET_PURCENT_CARD = 'JET_PURCENT_CARD';
+
+    /**
+     * Current credit order number counter
+     */
     public const JET_COUNT = 'JET_COUNT';
+
+    /**
+     * Spacing above credit button (in pixels)
+     */
     public const JET_GAP = 'JET_GAP';
+
+    /**
+     * Block title text above credit button
+     */
     public const JET_Z1 = 'JET_Z1';
+
+    /**
+     * Whether to show installment information
+     */
     public const JET_VNOSKA = 'JET_VNOSKA';
+
+    /**
+     * Minimum price for credit purchases
+     */
     public const JET_MINPRICE = 'JET_MINPRICE';
+
+    /**
+     * Currency operation mode (leva/euro display and conversion)
+     */
     public const JET_EUR = 'JET_EUR';
 
     /**
+     * PrestaShop configuration service
+     *
+     * Used to read and write configuration values to the PrestaShop configuration table.
+     *
      * @var ConfigurationInterface
      */
     private $configuration;
 
+    /**
+     * Constructor
+     *
+     * @param ConfigurationInterface $configuration PrestaShop configuration service
+     */
     public function __construct(ConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
     }
 
+    /**
+     * Get all CreditJet configuration values
+     *
+     * Retrieves all configuration settings for the CreditJet module from the database
+     * and returns them as an associative array with lowercase keys for form compatibility.
+     *
+     * @return array Configuration values array with keys like 'jet_status_in', 'jet_email', etc.
+     */
     public function getConfiguration(): array
     {
         $return = [];
@@ -59,6 +139,17 @@ final class CreditJetConfigurationDataConfiguration implements DataConfiguration
         return $return;
     }
 
+    /**
+     * Update CreditJet configuration values
+     *
+     * Validates and saves the provided configuration data to the database.
+     * If validation passes, all configuration keys are updated. Special handling
+     * is applied for the JET_COUNT field (defaults to 1 if empty).
+     *
+     * @param array $configuration Configuration data to save
+     *
+     * @return array Array of validation errors (empty if successful)
+     */
     public function updateConfiguration(array $configuration): array
     {
         $errors = [];
@@ -85,9 +176,14 @@ final class CreditJetConfigurationDataConfiguration implements DataConfiguration
     }
 
     /**
-     * Ensure the parameters passed are valid.
+     * Validate configuration data before saving
      *
-     * @return bool Returns true if no exception are thrown
+     * Performs basic validation on the configuration array to ensure required fields are present.
+     * Currently only checks for the presence of 'jet_status_in' field.
+     *
+     * @param array $configuration Configuration data to validate
+     *
+     * @return bool Returns true if validation passes, false otherwise
      */
     public function validateConfiguration(array $configuration): bool
     {

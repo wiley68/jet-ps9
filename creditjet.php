@@ -16,7 +16,6 @@ if (!defined('_PS_VERSION_')) {
 
 // Module constants are now defined as class constants above
 
-use PrestaShop\PrestaShop\Adapter\Module\Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 
@@ -24,25 +23,56 @@ use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
  * CreditJet Payment Module for PrestaShop 9.x
  * PB Personal Finance Credit Calculator
  *
- * @property int $is_eu_compatible
- * @property array|string $currencies
- * @property string $currencies_mode
+ * This module provides credit payment options for customers using PB Personal Finance services.
+ * It allows customers to purchase products on installments with credit card payments.
+ *
+ * @property int $is_eu_compatible Whether the module is EU compatible
+ * @property array|string $currencies Supported currencies for the module
+ * @property string $currencies_mode Currency selection mode
  */
 class Creditjet extends PaymentModule
 {
     // Module constants
+
+    /**
+     * Minimum price for credit calculations
+     */
     const JET_MINPRICE = 150.00;
+
+    /**
+     * Minimum amount for 250 BGN credit threshold
+     */
     const JET_MIN_250 = 250.00;
+
+    /**
+     * Minimum amount for 250 EUR credit threshold (converted)
+     */
     const JET_MIN_250_EUR = 125.00;
+
+    /**
+     * Maximum iterations for financial calculations
+     */
     const JETCREDIT_FINANCIAL_MAX_ITERATIONS = 128;
+
+    /**
+     * Precision for financial calculations
+     */
     const JETCREDIT_FINANCIAL_PRECISION = 1.0e-08;
 
+    /**
+     * Display name for card payment option
+     *
+     * @var string
+     */
     public $displayName_card;
 
     /**
      * Check if current user is on mobile device
      *
-     * @return bool True if mobile device detected
+     * This method detects mobile devices based on user agent string patterns
+     * to provide appropriate styling and functionality for mobile users.
+     *
+     * @return bool True if mobile device detected, false otherwise
      */
     public static function isMobileDevice(): bool
     {
@@ -50,6 +80,10 @@ class Creditjet extends PaymentModule
         return preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $useragent)
             || preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i', substr($useragent, 0, 4));
     }
+
+    /**
+     * List of hooks that this module registers
+     */
     const HOOKS = [
         'ActionFrontControllerSetMedia',
         'displayProductAdditionalInfo',
@@ -59,6 +93,9 @@ class Creditjet extends PaymentModule
 
     /**
      * Constructor
+     *
+     * Initializes the module with configuration settings and checks for required currencies.
+     * Sets up module properties and validates system requirements.
      */
     public function __construct()
     {
@@ -92,6 +129,13 @@ class Creditjet extends PaymentModule
         }
     }
 
+    /**
+     * Install the module
+     *
+     * Creates database tables, registers hooks, and sets default configuration values.
+     *
+     * @return bool True if installation was successful, false otherwise
+     */
     public function install(): bool
     {
         return parent::install()
@@ -127,6 +171,13 @@ class Creditjet extends PaymentModule
             );
     }
 
+    /**
+     * Register module hooks
+     *
+     * Registers all hooks defined in the HOOKS constant.
+     *
+     * @return bool True if all hooks were registered successfully, false otherwise
+     */
     private function registerHooks(): bool
     {
         foreach (static::HOOKS as $hook) {
@@ -137,6 +188,13 @@ class Creditjet extends PaymentModule
         return true;
     }
 
+    /**
+     * Uninstall the module
+     *
+     * Removes database tables and configuration values created during installation.
+     *
+     * @return bool True if uninstallation was successful, false otherwise
+     */
     public function uninstall(): bool
     {
         return $this->uninstallDb()
@@ -159,6 +217,13 @@ class Creditjet extends PaymentModule
             && parent::uninstall();
     }
 
+    /**
+     * Install database tables
+     *
+     * Executes SQL queries from the install.sql file to create required database tables.
+     *
+     * @return bool True if all queries executed successfully, false otherwise
+     */
     private function installDb(): bool
     {
         $sql = file_get_contents(__DIR__ . '/sql/install.sql');
@@ -172,6 +237,13 @@ class Creditjet extends PaymentModule
         return true;
     }
 
+    /**
+     * Uninstall database tables
+     *
+     * Executes SQL queries from the uninstall.sql file to remove database tables.
+     *
+     * @return bool True if all queries executed successfully, false otherwise
+     */
     private function uninstallDb(): bool
     {
         $sql = file_get_contents(__DIR__ . '/sql/uninstall.sql');
@@ -185,6 +257,23 @@ class Creditjet extends PaymentModule
         return true;
     }
 
+    /**
+     * Check if the module uses the new translation system
+     *
+     * @return bool Always returns true for this module
+     */
+    public function isUsingNewTranslationSystem()
+    {
+        return true;
+    }
+
+    /**
+     * Get module configuration content
+     *
+     * Redirects to the module configuration form in the admin panel.
+     *
+     * @return string Empty string (redirects via Tools::redirectAdmin)
+     */
     public function getContent(): string
     {
         $router = SymfonyContainer::getInstance()->get('router');
@@ -194,6 +283,15 @@ class Creditjet extends PaymentModule
         return '';
     }
 
+    /**
+     * Hook for adding CSS and JS files to frontend pages
+     *
+     * Registers module-specific CSS and JavaScript files for product, cart, and order pages.
+     *
+     * @param array $params Hook parameters
+     *
+     * @return void
+     */
     public function hookActionFrontControllerSetMedia($params)
     {
         if ('product' === $this->context->controller->php_self) {
@@ -258,6 +356,15 @@ class Creditjet extends PaymentModule
         }
     }
 
+    /**
+     * Hook for displaying additional product information
+     *
+     * Displays credit calculator widget on product pages with installment options.
+     *
+     * @param array $params Hook parameters containing product information
+     *
+     * @return string|null HTML content for the credit calculator or null if not applicable
+     */
     public function hookDisplayProductAdditionalInfo($params)
     {
         // Validate params
@@ -390,6 +497,15 @@ class Creditjet extends PaymentModule
         return $this->fetch('module:creditjet/views/templates/hook/creditjet.tpl');
     }
 
+    /**
+     * Hook for displaying shopping cart information
+     *
+     * Displays credit calculator widget on shopping cart page with cart total calculations.
+     *
+     * @param array $params Hook parameters containing cart information
+     *
+     * @return string|null HTML content for the credit calculator or null if not applicable
+     */
     public function hookDisplayShoppingCart($params)
     {
         // Validate currency context
@@ -563,6 +679,16 @@ class Creditjet extends PaymentModule
         return $this->fetch('module:creditjet/views/templates/hook/shoppingbag.tpl');
     }
 
+    /**
+     * Hook for adding payment options during checkout
+     *
+     * Creates payment options for credit payment and optional credit card payment
+     * based on module configuration and cart contents.
+     *
+     * @param array $params Hook parameters containing cart information
+     *
+     * @return array Array of PaymentOption objects or empty array if not applicable
+     */
     public function hookPaymentOptions($params)
     {
         if (empty($params['cart'])) {
@@ -577,14 +703,15 @@ class Creditjet extends PaymentModule
 
         $jet_currency_code = $this->context->currency->iso_code;
         if ($jet_currency_code != 'EUR' && $jet_currency_code != 'BGN') {
-            return null;
+            return [];
         }
 
         $jet_status_in = (int)Configuration::get('JET_STATUS_IN');
         $jet_card_in = (int)Configuration::get('JET_CARD_IN');
 
-        if ($jet_status_in == 0)
-            return;
+        if ($jet_status_in == 0) {
+            return [];
+        }
 
         $jet_price = $cart->getordertotal(true);
 

@@ -1,8 +1,39 @@
 <?php
 
+/**
+ * CreditJet Send Cart Front Controller
+ *
+ * Handles AJAX requests for sending cart data and creating credit applications.
+ * This controller processes credit requests from the frontend, validates input,
+ * generates email notifications, and creates orders for credit applications.
+ *
+ * Provides functionality for both regular credit and credit card payment requests,
+ * including customer data collection, product information processing, and order creation.
+ *
+ * @extends ModuleFrontController
+ */
 class CreditJetJetSendCartModuleFrontController extends ModuleFrontController
 {
 
+    /**
+     * Process AJAX request for credit application submission
+     *
+     * Handles the complete credit application flow including:
+     * - Security validation (AJAX requests only, CSRF protection)
+     * - Input sanitization for customer and credit data
+     * - Email content generation with customer and product details
+     * - Email sending to administrators and PB Personal Finance
+     * - Cart creation and order processing for successful applications
+     * - JSON response generation for frontend feedback
+     *
+     * Supports both regular credit and credit card applications with different
+     * processing logic and email content generation.
+     *
+     * Expected input parameters include customer info (name, email, EGN, phone),
+     * credit details (amounts, installments, down payment), and product information.
+     *
+     * @return void Outputs JSON response and terminates execution
+     */
     public function initContent()
     {
         // Security check - only allow AJAX requests (before any other logic)

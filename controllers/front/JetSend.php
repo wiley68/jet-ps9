@@ -11,9 +11,42 @@
 /**
  * @method static \Module getInstanceByName(string $module_name)
  */
+
+/**
+ * CreditJet Send Front Controller
+ *
+ * Handles AJAX requests for sending single product credit applications.
+ * This controller processes credit requests for individual products from the frontend,
+ * validates input, generates email notifications, and creates orders for credit applications.
+ *
+ * Similar to JetSendCart but focused on single product purchases rather than entire carts.
+ * Supports both regular credit and credit card payment requests.
+ *
+ * @extends ModuleFrontController
+ */
 class CreditJetJetSendModuleFrontController extends ModuleFrontController
 {
 
+    /**
+     * Process AJAX request for single product credit application
+     *
+     * Handles credit application submission for individual products including:
+     * - Security validation (AJAX requests only, CSRF protection)
+     * - Input sanitization for customer and credit data
+     * - Product information retrieval and formatting
+     * - Email content generation with customer and single product details
+     * - Email sending to administrators and PB Personal Finance
+     * - Cart creation and order processing for successful applications
+     * - JSON response generation for frontend feedback
+     *
+     * Supports both regular credit and credit card applications.
+     * Creates a cart with a single product for order processing.
+     *
+     * Expected input parameters include customer info, credit details,
+     * and single product information (ID, quantity, attributes).
+     *
+     * @return void Outputs JSON response and terminates execution
+     */
     public function initContent()
     {
         // Security check - only allow AJAX requests (before any other logic)

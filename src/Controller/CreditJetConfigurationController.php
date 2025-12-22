@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PrestaShop\Module\CreditJet\Controller;
 
-use Context;
 use Db;
 use DbQuery;
 use PrestaShop\PrestaShop\Core\Form\Handler;
@@ -12,16 +11,39 @@ use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * CreditJet Configuration Controller
+ *
+ * Handles the admin configuration interface for the CreditJet module.
+ * Manages form display, processing, and credit scheme management through
+ * the PrestaShop admin panel.
+ *
+ * @extends PrestaShopAdminController
+ */
 class CreditJetConfigurationController extends PrestaShopAdminController
 {
-    private const DOMAIN = 'Modules.Creditjet.Admin';
-
+    /**
+     * Constructor
+     *
+     * @param Handler $configurationFormHandler Form handler for processing configuration forms
+     */
     public function __construct(
         private readonly Handler $configurationFormHandler
     ) {
         // empty constructor
     }
 
+    /**
+     * Display and process the CreditJet configuration form
+     *
+     * Handles both GET requests (display form) and POST requests (process form submission).
+     * Manages form validation, saving, and provides links for credit scheme management.
+     * Also retrieves existing credit schemes for display in the admin interface.
+     *
+     * @param Request $request The HTTP request
+     *
+     * @return Response The rendered template response
+     */
     public function index(Request $request): Response
     {
         $textForm = $this->configurationFormHandler->getForm();
@@ -31,7 +53,7 @@ class CreditJetConfigurationController extends PrestaShopAdminController
             $errors = $this->configurationFormHandler->save($textForm->getData());
 
             if (empty($errors)) {
-                $this->addFlash('success', $this->trans('Successful update', [], self::DOMAIN));
+                $this->addFlash('success', $this->trans('Successful update', [], 'Modules.Creditjet.Admin'));
                 return $this->redirectToRoute('credit_jet_configuration_form');
             }
 
@@ -55,6 +77,14 @@ class CreditJetConfigurationController extends PrestaShopAdminController
         ]);
     }
 
+    /**
+     * Get all credit scheme rows from jet_kop table
+     *
+     * Retrieves all credit configuration records from the database
+     * for display in the admin interface.
+     *
+     * @return array Array of credit scheme records or empty array if none found
+     */
     private function getAllJetKopRows(): array
     {
         $sql = new DbQuery();

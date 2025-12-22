@@ -11,14 +11,42 @@ use Symfony\Component\HttpFoundation\Response;
 use Tools;
 
 /**
- * Controller for handling AJAX requests for creating credit schemes
+ * Create Schema Controller
+ *
+ * Handles AJAX requests for creating credit schemes in the CreditJet module.
+ * This controller provides endpoints for adding product-specific credit configurations
+ * and promotional settings through the admin interface.
+ *
+ * @extends PrestaShopAdminController
  */
 class CreateSchemaController extends PrestaShopAdminController
 {
-    private const DOMAIN = 'Modules.Creditjet.Admin';
-
     /**
      * Handle AJAX request for creating credit scheme
+     *
+     * Processes POST requests to create new credit schemes for specific products.
+     * Validates request method, sanitizes input data, performs data validation,
+     * and uses JetCreditModel to insert credit configurations into the database.
+     *
+     * Expected POST parameters:
+     * - jet_product_id: The product identifier (string, required)
+     * - jet_product_percent: Interest rate percentage (float, can be -1 for no interest)
+     * - jet_product_meseci: Available installment months (string, comma-separated, required)
+     * - jet_product_price: Minimum price for credit (float, required)
+     * - jet_product_start: Start date for the promotion (string, required)
+     * - jet_product_end: End date for the promotion (string, required)
+     *
+     * Returns JSON response with success status and message.
+     * Possible responses:
+     * - success: 'success' - scheme created or already exists
+     * - success: 'unsuccess' - validation error or database error
+     * - success: 'error' - invalid request method
+     *
+     * @param Request $request The HTTP request containing POST data
+     *
+     * @return Response JSON response with operation result
+     *
+     * @throws \Exception If database operation fails
      */
     public function create(Request $request): Response
     {
@@ -26,7 +54,7 @@ class CreateSchemaController extends PrestaShopAdminController
         if (!$request->isMethod('POST')) {
             return new Response(json_encode([
                 'success' => 'error',
-                'text' => $this->trans('Invalid request method', [], self::DOMAIN)
+                'text' => $this->trans('Invalid request method', [], 'Modules.Creditjet.Admin')
             ]), 200, ['Content-Type' => 'application/json']);
         }
 
@@ -43,7 +71,7 @@ class CreateSchemaController extends PrestaShopAdminController
             if (empty($jet_product_id) || empty($jet_product_meseci) || $jet_product_price === '' || empty($jet_product_start) || empty($jet_product_end)) {
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('All fields are required', [], self::DOMAIN)
+                    'text' => $this->trans('All fields are required', [], 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
 
@@ -51,7 +79,7 @@ class CreateSchemaController extends PrestaShopAdminController
             if (!is_numeric($jet_product_percent) || !is_numeric($jet_product_price)) {
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('Invalid numeric values', [], self::DOMAIN)
+                    'text' => $this->trans('Invalid numeric values', [], 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
 
@@ -69,25 +97,25 @@ class CreateSchemaController extends PrestaShopAdminController
                 // Scheme already exists
                 return new Response(json_encode([
                     'success' => 'success',
-                    'text' => $this->trans('You already have such a filter in place!', [], self::DOMAIN)
+                    'text' => $this->trans('You already have such a filter in place!', [], 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             } elseif ((int)$result === 0) {
                 // Database error
                 return new Response(json_encode([
                     'success' => 'unsuccess',
-                    'text' => $this->trans('You cannot create the filter.', [], self::DOMAIN)
+                    'text' => $this->trans('You cannot create the filter.', [], 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             } else {
                 // Success
                 return new Response(json_encode([
                     'success' => 'success',
-                    'text' => $this->trans('You have successfully written the filter.', [], self::DOMAIN)
+                    'text' => $this->trans('You have successfully written the filter.', [], 'Modules.Creditjet.Admin')
                 ]), 200, ['Content-Type' => 'application/json']);
             }
         } catch (\Exception $e) {
             return new Response(json_encode([
                 'success' => 'unsuccess',
-                'text' => $this->trans('An error occurred: %error%', ['%error%' => $e->getMessage()], self::DOMAIN)
+                'text' => $this->trans('An error occurred: %error%', ['%error%' => $e->getMessage()], 'Modules.Creditjet.Admin')
             ]), 200, ['Content-Type' => 'application/json']);
         }
     }

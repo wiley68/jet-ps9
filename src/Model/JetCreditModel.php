@@ -11,15 +11,28 @@ use Configuration;
 
 /**
  * JetCreditModel - Model for working with jet_kop table
- * Handles credit schemes and calculations
+ *
+ * This model handles credit schemes and promotional calculations for the CreditJet module.
+ * It manages product-specific credit configurations, interest rates, and promotional offers.
+ * The model interacts with the jet_kop database table to store and retrieve credit settings.
  */
 class JetCreditModel extends ObjectModel
 {
     /**
-     * Table name
+     * Database table name for credit configurations
+     *
+     * @var string
      */
     public const TABLE_NAME = 'jet_kop';
 
+    /**
+     * ObjectModel definition for the jet_kop table
+     *
+     * Defines the database table structure, primary key, and field validations
+     * for the JetCreditModel ObjectModel.
+     *
+     * @var array
+     */
     public static $definition = [
         'table' => self::TABLE_NAME,
         'primary' => 'id',
@@ -33,6 +46,21 @@ class JetCreditModel extends ObjectModel
         ],
     ];
 
+    /**
+     * Insert credit configuration if it doesn't already exist
+     *
+     * Checks if a credit configuration for the given product ID already exists.
+     * If not, inserts a new record. Returns -1 if the record already exists.
+     *
+     * @param string $jet_product_id Product identifier
+     * @param float $jet_product_percent Interest rate percentage
+     * @param string $jet_product_meseci Available installment months (comma-separated)
+     * @param float $jet_product_price Minimum price for credit
+     * @param string $jet_product_start Start date for the promotion
+     * @param string $jet_product_end End date for the promotion
+     *
+     * @return bool|int|string Database insert result or -1 if already exists
+     */
     public static function insertIfNotExists(
         $jet_product_id,
         $jet_product_percent,
@@ -61,6 +89,15 @@ class JetCreditModel extends ObjectModel
         }
     }
 
+    /**
+     * Delete credit configuration by product ID
+     *
+     * Removes all credit configurations associated with the specified product ID.
+     *
+     * @param string $jet_product_id Product identifier to delete configurations for
+     *
+     * @return bool True if deletion was successful, false otherwise
+     */
     public static function deleteByJetProductId($jet_product_id): bool
     {
         return Db::getInstance()->delete(
@@ -69,6 +106,22 @@ class JetCreditModel extends ObjectModel
         );
     }
 
+    /**
+     * Get promotional credit settings for a product
+     *
+     * Retrieves promotional interest rates and settings for a specific product based on
+     * installment count and total credit price. Checks for active promotions in the
+     * database and returns appropriate rates for both regular and card payments.
+     *
+     * @param string $jet_product_id Product identifier
+     * @param int $jet_vnoski Number of installments
+     * @param float $jet_total_credit_price Total credit amount
+     *
+     * @return array Array containing:
+     *               - 'jet_show_button' (bool): Whether to show credit button
+     *               - 'jet_purcent' (float): Interest rate percentage
+     *               - 'jet_purcent_card' (float|null): Card payment interest rate or null
+     */
     public static function getPromo($jet_product_id, $jet_vnoski, $jet_total_credit_price): array
     {
         $result = array();

@@ -5,8 +5,44 @@ use PrestaShop\Module\CreditJet\Model\JetCreditModel;
 /**
  * @method static \Module getInstanceByName(string $module_name)
  */
+
+/**
+ * CreditJet Calculate Front Controller
+ *
+ * Handles AJAX requests for credit calculation and financial computations.
+ * This controller processes credit parameters, performs complex financial calculations
+ * including interest rates, installment amounts, and promotional offers.
+ *
+ * Provides real-time credit calculation functionality for the frontend,
+ * supporting both regular and credit card payment calculations.
+ *
+ * @extends ModuleFrontController
+ */
 class CreditJetJetCalculateModuleFrontController extends ModuleFrontController
 {
+    /**
+     * Process AJAX request for credit calculation
+     *
+     * Performs comprehensive credit calculations including:
+     * - Security validation (AJAX requests only, CSRF protection)
+     * - Input sanitization for credit parameters
+     * - Currency conversion based on module settings
+     * - Promotional offer checking via JetCreditModel
+     * - Complex financial calculations (interest rates, installments, APR)
+     * - Multi-currency display support (leva/euro)
+     * - JSON response generation with all calculated values
+     *
+     * Supports both regular credit and credit card calculations.
+     * Uses RATE function for internal rate of return calculations.
+     *
+     * Expected input parameters:
+     * - jet_priceall: Total product price
+     * - jet_parva: Down payment amount
+     * - jet_vnoski: Number of installments
+     * - jet_product_id: Product identifier for promotions
+     *
+     * @return void Outputs JSON response with calculation results and terminates execution
+     */
     public function initContent()
     {
         // Security check - only allow AJAX requests
@@ -160,6 +196,21 @@ class CreditJetJetCalculateModuleFrontController extends ModuleFrontController
         die(json_encode($json));
     }
 
+    /**
+     * Calculate the interest rate for an annuity investment
+     *
+     * Uses Newton-Raphson method to calculate the internal rate of return for a series of cash flows.
+     * This is equivalent to Excel's RATE function and is used for calculating APR (Annual Percentage Rate).
+     *
+     * @param int $nper Number of periods
+     * @param float $pmt Payment amount per period
+     * @param float $pv Present value (loan amount)
+     * @param float $fv Future value (default: 0.0)
+     * @param int $type When payments are due (0 = end of period, 1 = beginning of period)
+     * @param float $guess Initial guess for the rate (default: 0.1)
+     *
+     * @return float Calculated interest rate per period
+     */
     public function RATE($nper, $pmt, $pv, $fv = 0.0, $type = 0, $guess = 0.1)
     {
         $rate = $guess;
