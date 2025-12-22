@@ -231,7 +231,7 @@ class CreditJetJetSendModuleFrontController extends ModuleFrontController
                     (int)$cart->id,
                     Configuration::get('PS_OS_PAYMENT'),
                     (float)$cart->getOrderTotal(true, Cart::BOTH),
-                    $payment_module->displayName,
+                    $jet_card == 1 ? $payment_module->displayName_card : $payment_module->displayName,
                     null,
                     [],
                     (int)$cart->id_currency,

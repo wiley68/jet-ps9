@@ -42,6 +42,8 @@ class Creditjet extends PaymentModule
     const JETCREDIT_FINANCIAL_MAX_ITERATIONS = 128;
     const JETCREDIT_FINANCIAL_PRECISION = 1.0e-08;
 
+    public $displayName_card;
+
     /**
      * Check if current user is on mobile device
      *
@@ -76,6 +78,7 @@ class Creditjet extends PaymentModule
         parent::__construct();
 
         $this->displayName = $this->l('PB Personal Finance');
+        $this->displayName_card = $this->l('PB Personal Finance - in installments with a credit card');
         $this->description = $this->l('Allows your customers to purchase goods on installments with PB Personal Finance');
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
 
