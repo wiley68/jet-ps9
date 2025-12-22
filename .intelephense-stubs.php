@@ -729,7 +729,7 @@ namespace {
         public function get(string $service)
         {
             if ($service === 'router') {
-                return new Router();
+                return new \PrestaShop\PrestaShop\Adapter\Router();
             }
             return null;
         }
@@ -755,53 +755,6 @@ namespace {
         }
 
         public function fetch(string $template): string
-        {
-            return '';
-        }
-    }
-
-    class PaymentOption
-    {
-        public function setCallToActionText(string $text): self
-        {
-            return $this;
-        }
-        public function setAction(string $action): self
-        {
-            return $this;
-        }
-        public function setAdditionalInformation(string $info): self
-        {
-            return $this;
-        }
-        public function setLogo(string $logo): self
-        {
-            return $this;
-        }
-    }
-
-    class HelperForm
-    {
-        public $show_toolbar = true;
-        public $table;
-        public $module;
-        public $default_form_language;
-        public $allow_employee_form_lang;
-        public $identifier;
-        public $submit_action;
-        public $currentIndex;
-        public $token;
-        public $tpl_vars = [];
-
-        public function generateForm(array $fields_form): string
-        {
-            return '';
-        }
-    }
-
-    class Router
-    {
-        public function generate(string $route, array $params = []): string
         {
             return '';
         }
@@ -847,6 +800,64 @@ namespace {
             return true;
         }
     }
+}
+
+namespace PrestaShop\PrestaShop\Core\Payment {
+
+    class PaymentOption
+    {
+        public function setCallToActionText(string $text): self
+        {
+            return $this;
+        }
+        public function setAction(string $action): self
+        {
+            return $this;
+        }
+        public function setAdditionalInformation(string $info): self
+        {
+            return $this;
+        }
+        public function setLogo(string $logo): self
+        {
+            return $this;
+        }
+        public function setModuleName(string $moduleName): self
+        {
+            return $this;
+        }
+    }
+
+    class HelperForm
+    {
+        public $show_toolbar = true;
+        public $table;
+        public $module;
+        public $default_form_language;
+        public $allow_employee_form_lang;
+        public $identifier;
+        public $submit_action;
+        public $currentIndex;
+        public $token;
+        public $tpl_vars = [];
+
+        public function generateForm(array $fields_form): string
+        {
+            return '';
+        }
+    }
+}
+
+namespace PrestaShop\PrestaShop\Adapter {
+
+    class Router
+    {
+        public function generate(string $route, array $params = []): string
+        {
+            return '';
+        }
+    }
+
 
     class Context
     {
@@ -991,8 +1002,10 @@ namespace {
     }
 
     // Exceptions
-    class PrestaShopException extends Exception {}
-    class PrestaShopModuleException extends PrestaShopException {}
+    class PrestaShopExceptionCore extends \Exception {}
+    class PrestaShopException extends PrestaShopExceptionCore {}
+    class PrestaShopModuleExceptionCore extends PrestaShopException {}
+    class PrestaShopModuleException extends PrestaShopModuleExceptionCore {}
 
     // Constants
     define('_PS_VERSION_', '9.0.0');

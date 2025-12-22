@@ -16,11 +16,6 @@ if (!defined('_PS_VERSION_')) {
 
 // Module constants are now defined as class constants above
 
-$autoloadPath = __DIR__ . '/vendor/autoload.php';
-if (file_exists($autoloadPath)) {
-    require_once $autoloadPath;
-}
-
 use PrestaShop\PrestaShop\Adapter\Module\Module;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
@@ -58,7 +53,8 @@ class Creditjet extends PaymentModule
     const HOOKS = [
         'ActionFrontControllerSetMedia',
         'displayProductAdditionalInfo',
-        'displayShoppingCart'
+        'displayShoppingCart',
+        'paymentOptions'
     ];
 
     /**
@@ -237,6 +233,26 @@ class Creditjet extends PaymentModule
                     'priority' => 200,
                     'attribute' => 'async',
                     'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/js/creditjet_cart.js')
+                ]
+            );
+        }
+        if ('order' === $this->context->controller->php_self) {
+            $this->context->controller->registerStylesheet(
+                'module-creditjet-checkout-css',
+                'modules/' . $this->name . '/css/creditjet_checkout.css',
+                [
+                    'media' => 'all',
+                    'priority' => 200,
+                    'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/css/creditjet_checkout.css')
+                ]
+            );
+            $this->context->controller->registerJavascript(
+                'module-creditjet-checkout-js',
+                'modules/' . $this->name . '/js/creditjet_checkout.js',
+                [
+                    'priority' => 200,
+                    'attribute' => 'async',
+                    'version' => filemtime(_PS_MODULE_DIR_ . $this->name . '/js/creditjet_checkout.js')
                 ]
             );
         }
@@ -545,5 +561,153 @@ class Creditjet extends PaymentModule
         ]);
 
         return $this->fetch('module:creditjet/views/templates/hook/shoppingbag.tpl');
+    }
+
+    public function hookPaymentOptions($params)
+    {
+        if (empty($params['cart'])) {
+            return [];
+        }
+
+        $cart = $params['cart'];
+
+        if ($cart->isVirtualCart()) {
+            return [];
+        }
+
+        $jet_currency_code = $this->context->currency->iso_code;
+        if ($jet_currency_code != 'EUR' && $jet_currency_code != 'BGN') {
+            return null;
+        }
+
+        $jet_status_in = (int)Configuration::get('JET_STATUS_IN');
+        $jet_card_in = (int)Configuration::get('JET_CARD_IN');
+
+        if ($jet_status_in == 0)
+            return;
+
+        $jet_price = $cart->getordertotal(true);
+
+        $jet_eur = (int)Configuration::get("JET_EUR");
+        $jet_sign = 'лв.';
+        $jet_sign_second = 'евро';
+        $jet_min_250 = self::JET_MIN_250;
+
+        switch ($jet_eur) {
+            case 0:
+                $jet_sign = 'лв.';
+                $jet_sign_second = '';
+                break;
+            case 1:
+                if ($jet_currency_code == "EUR") {
+                    $jet_price = number_format($jet_price * 1.95583, 2, ".", "");
+                }
+                $jet_sign = 'лв.';
+                $jet_sign_second = 'евро';
+                break;
+            case 2:
+                if ($jet_currency_code == "BGN") {
+                    $jet_price = number_format($jet_price / 1.95583, 2, ".", "");
+                }
+                $jet_sign = 'евро';
+                $jet_sign_second = 'лв.';
+                $jet_min_250 = self::JET_MIN_250_EUR;
+                break;
+            case 3:
+                if ($jet_currency_code == "BGN") {
+                    $jet_price = number_format($jet_price / 1.95583, 2, ".", "");
+                }
+                $jet_sign = 'евро';
+                $jet_sign_second = '';
+                $jet_min_250 = self::JET_MIN_250_EUR;
+                break;
+        }
+
+        $jet_vnoski_default = (int)Configuration::get("JET_VNOSKI_DEFAULT");
+        if ($jet_price < $jet_min_250) {
+            $jet_vnoski = '9';
+        } else {
+            $jet_vnoski = $jet_vnoski_default;
+        }
+
+        $jet_products = $cart->getProducts(true);
+        $jet_products_id = '';
+        $jet_products_qt = '';
+        $jet_products_pr = '';
+        $jet_products_ct = '';
+        $jet_products_vr = '';
+        foreach ($jet_products as $product) {
+            $jet_products_id .= $product['id_product'] . '_';
+            $jet_products_qt .= $product['cart_quantity'] . '_';
+            $jet_products_pr_current = (float)$product['price_wt'];
+            switch ($jet_eur) {
+                case 0:
+                    break;
+                case 1:
+                    if ($jet_currency_code == "EUR") {
+                        $jet_products_pr_current = $jet_products_pr_current * 1.95583;
+                    }
+                    break;
+                case 2:
+                case 3:
+                    if ($jet_currency_code == "BGN") {
+                        $jet_products_pr_current = $jet_products_pr_current / 1.95583;
+                    }
+                    break;
+            }
+            $jet_products_pr .= number_format($jet_products_pr_current, 2, ".", "") . '_';
+            $jet_products_ct .= $product['id_category_default'] . '_';
+            $jet_products_vr .= $product['id_product_attribute'] . '_';
+        }
+        $jet_products_id = substr($jet_products_id, 0, -1);
+        $jet_products_qt = substr($jet_products_qt, 0, -1);
+        $jet_products_pr = substr($jet_products_pr, 0, -1);
+        $jet_products_ct = substr($jet_products_ct, 0, -1);
+        $jet_products_vr = substr($jet_products_vr, 0, -1);
+
+        if (self::isMobileDevice()) {
+            $jet_column_left = "jetm_column_left";
+            $jet_column_right = "jetm_column_right";
+        } else {
+            $jet_column_left = "jet_column_left";
+            $jet_column_right = "jet_column_right";
+        }
+
+        $this->context->smarty->assign([
+            'static_token' => \Tools::getToken(),
+            'static_token_card' => \Tools::getToken(),
+            'jet_price' => $cart->getordertotal(true),
+            'jet_products_id' => $jet_products_id,
+            'jet_products_qt' => $jet_products_qt,
+            'jet_products_pr' => $jet_products_pr,
+            'jet_products_ct' => $jet_products_ct,
+            'jet_products_vr' => $jet_products_vr,
+            'jet_column_left' => $jet_column_left,
+            'jet_sign' => $jet_sign,
+            'jet_column_right' => $jet_column_right,
+            'jet_sign_second' => $jet_sign_second,
+            'jet_eur' => $jet_eur,
+            'jet_vnoski' => $jet_vnoski,
+            'jet_action' => $this->context->link->getModuleLink($this->name, 'validation', ['jet_card' => 0], true),
+            'jet_action_card' => $this->context->link->getModuleLink($this->name, 'validation', ['jet_card' => 1], true)
+        ]);
+
+        $payment_options = [];
+
+        $newOption_JET = new PaymentOption();
+        $newOption_JET->setModuleName($this->name);
+        $newOption_JET->setCallToActionText($this->displayName);
+        $newOption_JET->setAdditionalInformation($this->fetch('module:creditjet/views/templates/hook/jet_checkout.tpl'));
+        $payment_options[] = $newOption_JET;
+
+        if ($jet_card_in == 1) {
+            $newOption_JET_CARD = new PaymentOption();
+            $newOption_JET_CARD->setModuleName($this->name . 'card');
+            $newOption_JET_CARD->setCallToActionText($this->displayName_card);
+            $newOption_JET_CARD->setAdditionalInformation($this->fetch('module:creditjet/views/templates/hook/jet_checkout_card.tpl'));
+            $payment_options[] = $newOption_JET_CARD;
+        }
+
+        return $payment_options;
     }
 }
