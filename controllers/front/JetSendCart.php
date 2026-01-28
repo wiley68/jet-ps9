@@ -158,25 +158,25 @@ class CreditJetJetSendCartModuleFrontController extends ModuleFrontController
 
             $body .= "Тип стока: " . $product_c_txt . ";\r\n";
             $body .= "Марка: " . "(" . $jet_product_id . ") " . $product_m_txt .  $jet_product_vp . ";\r\n";
-            $body .= "Единична цена в " . $jet_sign . " с ДДС: " . number_format($product_p_txt, 2, ".", "") . ";\r\n";
+            $body .= "Единична цена с ДДС: " . number_format($product_p_txt, 2, ".", "") . ";\r\n";
             $body .= "Брой стоки: " . $product_q_txt . ";\r\n";
-            $body .= "Обща сума в " . $jet_sign . " с ДДС: " . number_format((float)$product_q_txt * (float)$product_p_txt, 2, ".", "") . ";\r\n\r\n";
+            $body .= "Обща сума с ДДС: " . number_format((float)$product_q_txt * (float)$product_p_txt, 2, ".", "") . ";\r\n\r\n";
         }
 
         if ($jet_card == 1) {
             $body .= "Тип стока: Кредитна Карта;\r\n";
             $body .= "Марка: -;\r\n";
-            $body .= "Единична цена в " . $jet_sign . " с ДДС: 0.00;\r\n";
+            $body .= "Единична цена с ДДС: 0.00;\r\n";
             $body .= "Брой стоки: 1;\r\n";
-            $body .= "Обща сума в " . $jet_sign . " с ДДС: 0.00;\r\n\r\n";
+            $body .= "Обща сума с ДДС: 0.00;\r\n\r\n";
         }
 
         $body .= "Данни за кредита:\r\n";
 
-        $body .= "Размер на кредита в " . $jet_sign . ": " . number_format($jet_priceall - $jet_parva, 2, '.', '') . ";\r\n";
+        $body .= "Размер на кредита: " . number_format($jet_priceall - $jet_parva, 2, '.', '') . ";\r\n";
         $body .= "Срок на изплащане в месеца: $jet_vnoski;\r\n";
-        $body .= "Месечна вноска в " . $jet_sign . ": $jet_vnoska;\r\n";
-        $body .= "Първоначална вноска в " . $jet_sign . ": " . number_format(floatval($jet_parva), 2, ".", "") . ";\r\n";
+        $body .= "Месечна вноска: $jet_vnoska;\r\n";
+        $body .= "Първоначална вноска: " . number_format(floatval($jet_parva), 2, ".", "") . ";\r\n";
 
         $jetcredit_id = (string)Configuration::get('JET_ID');
         $creditjet_count = (int)Configuration::get('JET_COUNT');
