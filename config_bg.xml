@@ -2,7 +2,7 @@
 <module>
     <name>creditjet</name>
     <displayName><![CDATA[ПБ Лични Финанси]]></displayName>
-    <version><![CDATA[1.8.1]]></version>
+    <version><![CDATA[1.8.2]]></version>
     <description><![CDATA[Дава възможност на Вашите клиенти да закупуват стока на изплащане с ПБ Лични Финанси]]></description>
     <author><![CDATA[Ilko Ivanov]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
