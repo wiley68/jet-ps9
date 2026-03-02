@@ -7,7 +7,7 @@
  * @Publisher: Avalon Ltd
  * @Publisher e-mail: home@avalonbg.com
  * @Owner: Avalon Ltd
- * @Version: 1.8.2
+ * @Version: 1.8.3
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -101,7 +101,7 @@ class Creditjet extends PaymentModule
     {
         $this->name = 'creditjet';
         $this->tab = 'payments_gateways';
-        $this->version = '1.8.2';
+        $this->version = '1.8.3';
         $this->author = 'Ilko Ivanov';
         $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => '9.99.99'];
         $this->bootstrap = true;
@@ -147,7 +147,7 @@ class Creditjet extends PaymentModule
             )
             && Configuration::updateValue(
                 'JET_EMAIL',
-                'online.shop@pbpf.bg'
+                'pf-online.shop@postbank.bg'
             )
             && Configuration::updateValue(
                 'JET_PURCENT',

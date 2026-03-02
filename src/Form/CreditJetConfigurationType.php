@@ -48,7 +48,7 @@ class CreditJetConfigurationType extends TranslatorAwareType
             ->add('jet_email', TextType::class, [
                 'label'    => $this->trans('Select email for sending', 'Modules.Creditjet.Admin'),
                 'help'     => $this->trans(
-                    'Select email address where customer requests will be sent. Use "online.shop@pbpf.bg" to send requests to PB Personal Finance. You can enter multiple email addresses separated by commas. (If left empty, the system default email will be used. It is recommended to use an email outside your domain to avoid auto spam protection.)',
+                    'Select email address where customer requests will be sent. Use "pf-online.shop@postbank.bg" to send requests to PB Personal Finance. You can enter multiple email addresses separated by commas. (If left empty, the system default email will be used. It is recommended to use an email outside your domain to avoid auto spam protection.)',
                     'Modules.Creditjet.Admin'
                 ),
                 'required' => true,
