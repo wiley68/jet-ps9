@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="ModulesCreditjetCreditjet.xlf" source-language="bg-BG" target-language="bg-BG" datatype="plaintext">
+    <body>
+      <trans-unit id="50f2c221a16260ba20b255180d907109">
+        <source>0.00%</source>
+        <target>0.00%</target>
+      </trans-unit>
+      <trans-unit id="ed5a8e294f258cdbcfe7fc3c1b55c27b">
+        <source>0.80%</source>
+        <target>0.80%</target>
+      </trans-unit>
+      <trans-unit id="08ea8c3e0a2a09eb53b28504dc177d57">
+        <source>0.90%</source>
+        <target>0.90%</target>
+      </trans-unit>
+      <trans-unit id="0371db4ab2286abc969d1ba91df0c98a">
+        <source>0.99%</source>
+        <target>0.99%</target>
+      </trans-unit>
+      <trans-unit id="868a30dfd9f5957099a1d15952147dd4">
+        <source>1.00%</source>
+        <target>1.00%</target>
+      </trans-unit>
+      <trans-unit id="6d894c65d06890ff0701b9ddf6975075">
+        <source>1.10%</source>
+        <target>1.10%</target>
+      </trans-unit>
+      <trans-unit id="b7011c22affbe892277c1bb489b08c8d">
+        <source>1.20%</source>
+        <target>1.20%</target>
+      </trans-unit>
+      <trans-unit id="bacea6c4594de7bd1b49f7d1c616643d">
+        <source>1.40%</source>
+        <target>1.40%</target>
+      </trans-unit>
+      <trans-unit id="805ce3edf6215c6fa2b0cbf128000f0d">
+        <source>Allows your customers to purchase goods on installments with PB Personal Finance</source>
+        <target>Дава възможност на Вашите клиенти да закупуват стока на изплащане с ПБ Лични Финанси</target>
+      </trans-unit>
+      <trans-unit id="bb8956c67b82c7444a80c6b2433dd8b4">
+        <source>Are you sure you want to uninstall this module?</source>
+        <target>Сигурни ли сте, че искате да деинсталирате?</target>
+      </trans-unit>
+      <trans-unit id="c5aedc4768ad41f8752c4547a405d35e">
+        <source>EUR or BGN currency must be enabled in the system.</source>
+        <target>Валутата EUR или BGN трябва да е активирана в системата.</target>
+      </trans-unit>
+      <trans-unit id="66a14c788c6e7c28cb9f4956d39053be">
+        <source>No merchant ID provided</source>
+        <target>Няма предоставено име</target>
+      </trans-unit>
+      <trans-unit id="1c30852eeb93abad7ef9956c3ca08cd3">
+        <source>PB Personal Finance</source>
+        <target>ПБ Лични Финанси</target>
+      </trans-unit>
+      <trans-unit id="278a7dbf696dd5d47af19ce2898bc214">
+        <source>PB Personal Finance - in installments with a credit card</source>
+        <target>ПБ Лични Финанси - на вноски с кредитна карта</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

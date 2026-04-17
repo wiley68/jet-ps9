@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="ModulesCreditjetAdmin.xlf" source-language="bg-BG" target-language="bg-BG" datatype="plaintext">
+    <body>
+      <trans-unit id="8acece00c311fe85c4db85736df58eb8">
+        <source> AJAX
+    error</source>
+        <target>AJAX грешка</target>
+      </trans-unit>
+      <trans-unit id="1d4a34805c58f19c3d7970e967dc3356">
+        <source> All fields are required</source>
+        <target>Всички полета са задължителни</target>
+      </trans-unit>
+      <trans-unit id="e98fc9e5197ae2d1711bc508816992af">
+        <source> Credit scheme created
+    successfully</source>
+        <target>Кредитната схема е създадена успешно</target>
+      </trans-unit>
+      <trans-unit id="f7d8af35caedaf737803806954ce7f39">
+        <source> Credit scheme deleted
+    successfully</source>
+        <target>Кредитната схема е успешно изтрита</target>
+      </trans-unit>
+      <trans-unit id="883f879901f6b57b4e42a7a42fcaf340">
+        <source> Failed to create
+    credit scheme</source>
+        <target>Създаването на кредитна схема не бе успешно</target>
+      </trans-unit>
+      <trans-unit id="eb4f073410fdc06b6e2be16cb9ca5e76">
+        <source> Failed to delete
+    credit scheme</source>
+        <target>Неуспешно изтриване на кредитната схема</target>
+      </trans-unit>
+      <trans-unit id="e3b2a6d5fe4c268d7f994b6a3bda9811">
+        <source>12 months</source>
+        <target>12 месеца</target>
+      </trans-unit>
+      <trans-unit id="c0a348509ddb52895813308a712b64ba">
+        <source>15 months</source>
+        <target>15 месеца</target>
+      </trans-unit>
+      <trans-unit id="0d8eac2e4496012802469efd279ec904">
+        <source>18 months</source>
+        <target>18 месеца</target>
+      </trans-unit>
+      <trans-unit id="0f8152665710ade09c9988b0a7efcd8d">
+        <source>24 months</source>
+        <target>24 месеца</target>
+      </trans-unit>
+      <trans-unit id="de0353cab16c9faa68162dffe7b3ec08">
+        <source>3 months</source>
+        <target>3 месеца</target>
+      </trans-unit>
+      <trans-unit id="b15aa2b092682d895f93ce34acc77009">
+        <source>30 months</source>
+        <target>30 месеца</target>
+      </trans-unit>
+      <trans-unit id="1e6624b10200e6b258274f1c385360bc">
+        <source>36 months</source>
+        <target>36 месеца</target>
+      </trans-unit>
+      <trans-unit id="9f7aa8ce719604f269027cacec634cf1">
+        <source>6 months</source>
+        <target>6 месеца</target>
+      </trans-unit>
+      <trans-unit id="e195fb9a4fb6ac90accc9821867ae5ec">
+        <source>9 months</source>
+        <target>9 месеца</target>
+      </trans-unit>
+      <trans-unit id="2e6c2d96aaacc8ef06d0ea12237cfc2e">
+        <source>All fields are required</source>
+        <target>Всички полета са задължителни</target>
+      </trans-unit>
+      <trans-unit id="7aeca74df1eb12748235b50273f8bf86">
+        <source>An error occurred: %error%</source>
+        <target>Възникна грешка: %error%</target>
+      </trans-unit>
+      <trans-unit id="b22c8f9ad7db023c548c3b8e846cb169">
+        <source>Block title</source>
+        <target>Заглавие на блока</target>
+      </trans-unit>
+      <trans-unit id="bbf6e1fee33317b30476cd0896ccaff7">
+        <source>Bold text above the button. If left empty, the text will not be displayed</source>
+        <target>Удебелен текст над бутона. Ако се остави празно, текстът няма да се показва.</target>
+      </trans-unit>
+      <trans-unit id="6b1055f045a5798efb6c0ff078540f9c">
+        <source>Credit scheme deleted successfully</source>
+        <target>Кредитната схема е успешно изтрита</target>
+      </trans-unit>
+      <trans-unit id="93ec3fb3698a38db474d6a3651aa067b">
+        <source>Currency operation mode selection</source>
+        <target>Избор на режим на работа с валута</target>
+      </trans-unit>
+      <trans-unit id="4f581714311bf8f5998a90430a816a76">
+        <source>Currency operation mode selection. Option to display in euro or leva. Sending requests in euro or leva with currency conversion if necessary</source>
+        <target>Избор на режим на работа с валута. Възможност за показване в евро или лева. Изпращане на заявки в евро или лева с конвертиране на валута, ако е необходимо.</target>
+      </trans-unit>
+      <trans-unit id="4a8310892627a234355a48be7271164f">
+        <source>Current leasing order number</source>
+        <target>Номер на текущата поръчка за лизинг</target>
+      </trans-unit>
+      <trans-unit id="44838b464c5216aba7ff9f1a4d8dd15a">
+        <source>Default number of installments selection</source>
+        <target>Избор на брой вноски по подразбиране на страницата на продукта</target>
+      </trans-unit>
+      <trans-unit id="58ef52574c745b2326ffd4a4cb2a5ea8">
+        <source>Default number of installments selection on product page</source>
+        <target>Избор на брой вноски по подразбиране на страницата на продукта</target>
+      </trans-unit>
+      <trans-unit id="890922b5bf008c428d8620729a9cd746">
+        <source>Double visualization euro/leva and sending requests in euro</source>
+        <target>Двойна визуализация евро/лева и изпращане на заявки в евро</target>
+      </trans-unit>
+      <trans-unit id="831d9ac03defa4188cf360f814f3d41c">
+        <source>Double visualization leva/euro and sending requests in leva</source>
+        <target>Двойна визуализация лева/евро и изпращане на заявки в лева</target>
+      </trans-unit>
+      <trans-unit id="db5f9b0fdb52a7f3d8bab82dcaa20dbe">
+        <source>Empty space above button</source>
+        <target>Празно място над бутона</target>
+      </trans-unit>
+      <trans-unit id="2518f53b1c957af99933d05a56445b06">
+        <source>Empty space above button in px. Used for button arrangement when there are more than one</source>
+        <target>Празно пространство над бутона в пиксели. Използва се за подреждане на бутони, когато има повече от един.</target>
+      </trans-unit>
+      <trans-unit id="7a01a554b2fe1ebe7f033013913d66b3">
+        <source>Enable module</source>
+        <target>Активиране на модула</target>
+      </trans-unit>
+      <trans-unit id="1fefd1fe91fddfbbaebbac48ff8b92e3">
+        <source>Failed to delete credit scheme</source>
+        <target>Неуспешно изтриване на кредитната схема</target>
+      </trans-unit>
+      <trans-unit id="53f64b147a01aa65c26ccf0e233e7f43">
+        <source>Interest rate percentage selection</source>
+        <target>Избор на лихвен процент</target>
+      </trans-unit>
+      <trans-unit id="89e53f2d37772b19dbb2a07abd626e92">
+        <source>Interest rate percentage via credit card</source>
+        <target>Процент на лихвен процент по кредитна карта</target>
+      </trans-unit>
+      <trans-unit id="12c8ee9fa8429d350d2def6b97352f20">
+        <source>Invalid numeric values</source>
+        <target>Невалидни числови стойности</target>
+      </trans-unit>
+      <trans-unit id="bb7fa7df9829eb0f07eb18085c039269">
+        <source>Invalid request method</source>
+        <target>Невалиден метод на заявка</target>
+      </trans-unit>
+      <trans-unit id="9f6e99bdd4184b83dc478d0ab1b4cbf7">
+        <source>Minimum amount</source>
+        <target>Минимална сума</target>
+      </trans-unit>
+      <trans-unit id="766de0f36054cdd462da76a0dcd28094">
+        <source>Minimum possible amount of goods for credit purchase through PB Personal Finance</source>
+        <target>Минимално възможна цена на стоките за покупка на кредит чрез ПБ Лични Финанси</target>
+      </trans-unit>
+      <trans-unit id="2233860d823cd2ba594ad8935cd2879e">
+        <source>Order №</source>
+        <target>Номер на поръчка</target>
+      </trans-unit>
+      <trans-unit id="afd07833ccd1d54ae7d8e1bad3fb8725">
+        <source>Product ID is required</source>
+        <target>Изисква се идентификационен номер на продукта</target>
+      </trans-unit>
+      <trans-unit id="a3dfa799b6ba0a0342f9bd365ad5e0c7">
+        <source>Select email address where customer requests will be sent. Use "pf-online.shop@postbank.bg" to send requests to PB Personal Finance. You can enter multiple email addresses separated by commas. (If left empty, the system default email will be used. It is recommended to use an email outside your domain to avoid auto spam protection.)</source>
+        <target>Изберете имейл адрес, на който ще бъдат изпращани заявките на клиентите. Използвайте „pf-online.shop@postbank.bg“, за да изпращате заявки до ПБ Лични Финанси. Можете да въведете няколко имейл адреса, разделени със запетаи. (Ако полето е оставено празно, ще се използва системният имейл по подразбиране. Препоръчително е да използвате имейл извън вашия домейн, за да избегнете автоматична защита от спам.)</target>
+      </trans-unit>
+      <trans-unit id="30e7027dbb7be26e3e10c2a28da4cb5a">
+        <source>Select email for sending</source>
+        <target>Изберете имейл за изпращане</target>
+      </trans-unit>
+      <trans-unit id="8da2b08812fb01734a6435baf3f529b0">
+        <source>Select store identifier for sending</source>
+        <target>Изберете идентификатор на магазина за изпращане</target>
+      </trans-unit>
+      <trans-unit id="1e9ccb65cf7722bf82026eca0a26efc2">
+        <source>Select store identifier to be sent to the Bank along with the leasing request. The Bank will identify your requests by this identifier</source>
+        <target>Изберете идентификатор на магазина, който да бъде изпратен до банката заедно със заявката за лизинг. Банката ще идентифицира вашите заявки по този идентификатор.</target>
+      </trans-unit>
+      <trans-unit id="3f480360d723fa502388d952d9ffcde2">
+        <source>Selection of interest rate percentage table for leasing request made via credit card method</source>
+        <target>Избор на лихвени проценти за заявка за лизинг, направена чрез кредитна карта</target>
+      </trans-unit>
+      <trans-unit id="2fc1326d155417654bfcea544875dfbf">
+        <source>Show button for sending via credit card</source>
+        <target>Показване на бутон за изпращане чрез кредитна карта</target>
+      </trans-unit>
+      <trans-unit id="57028f1aeb5728be2fe2c467bcf24657">
+        <source>Show button in cart</source>
+        <target>Показване на бутона в количката</target>
+      </trans-unit>
+      <trans-unit id="1c40a2b5497b06bb364a5bd13e1da04d">
+        <source>Show credit purchase button through PB Personal Finance in cart</source>
+        <target>Показване на бутон за покупка с кредит чрез ПБ Лични Финанси в количката</target>
+      </trans-unit>
+      <trans-unit id="65adcd624f8741639521b96f6f5dc810">
+        <source>Show credit purchase button through PB Personal Finance with leasing request made via credit card method</source>
+        <target>Показване на бутон за покупка на кредит чрез ПБ Лични Финанси при заявка за лизинг, направена чрез метод с кредитна карта</target>
+      </trans-unit>
+      <trans-unit id="068c5a66d58e6223bb683bbf0fe834a2">
+        <source>Show credit purchase buttons through PB Personal Finance</source>
+        <target>Показване на бутони за покупка на кредит чрез ПБ Лични Финанси</target>
+      </trans-unit>
+      <trans-unit id="c2883e22ca11631b16dc86179d95ffd1">
+        <source>Show installment</source>
+        <target>Покажи вноска</target>
+      </trans-unit>
+      <trans-unit id="7b0d8753fe600dc9d6aad882887b7300">
+        <source>Single visualization in euro and sending requests in euro</source>
+        <target>Единична визуализация в евро и изпращане на заявки в евро</target>
+      </trans-unit>
+      <trans-unit id="bef3eab195cca9bbb5eb5b431a0f0520">
+        <source>Single visualization in leva and sending requests in leva</source>
+        <target>Единична визуализация в лева и изпращане на заявки в лева</target>
+      </trans-unit>
+      <trans-unit id="d4eab6753f9f3d4b57580427264beaa6">
+        <source>Successful update</source>
+        <target>Успешна актуализация</target>
+      </trans-unit>
+      <trans-unit id="238794d3d703410a5bf2e7b7009ec2a0">
+        <source>Whether to show text to the right of the button indicating the monthly installment for the selected leasing period?</source>
+        <target>Да се ​​показва ли текст вдясно от бутона, указващ месечната вноска за избрания лизингов период?</target>
+      </trans-unit>
+      <trans-unit id="2e0a1ffc90c704f3471718d2fce1cda7">
+        <source>You already have such a filter in place!</source>
+        <target>Вече имате такъв филтър!</target>
+      </trans-unit>
+      <trans-unit id="1e72ae5569220bad545b4a87d326d127">
+        <source>You cannot create the filter.</source>
+        <target>Не можете да създадете филтъра.</target>
+      </trans-unit>
+      <trans-unit id="d25ef656de091444a344a8b1b59a68ca">
+        <source>You have successfully written the filter.</source>
+        <target>Успешно създадохте филтъра.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
