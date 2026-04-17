@@ -1,0 +1,48 @@
+# Composer
+/vendor/
+composer.phar
+
+# Node (ако добавите front-end build)
+/node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# PHPUnit / тестове
+.phpunit.result.cache
+coverage/
+.clover
+
+# PHPStan / PHP-CS-Fixer кеш
+.phpstan/
+phpstan-tmp/
+.php-cs-fixer.cache
+
+# IDE и редактори
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.settings/
+*.swp
+*.swo
+*~
+
+# ОС
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Локални / секретни настройки
+.env
+.env.*
+!.env.example
+
+# Логове и временни файлове
+*.log
+/tmp/
+/temp/
+
+# Архиви за пакетиране на модула (ако генерирате zip)
+*.zip
+*.tar.gz
