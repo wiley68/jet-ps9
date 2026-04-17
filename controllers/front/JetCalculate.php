@@ -155,8 +155,8 @@ class CreditJetJetCalculateModuleFrontController extends ModuleFrontController
                 $jet_total_credit_price_second = number_format($jet_total_credit_price_second * 1.95583, 2, ".", "");
                 $jet_obshto_second = number_format($jet_obshto_second * 1.95583, 2, ".", "");
                 if ($jet_card_in == 1) {
-                    $jet_vnoska_card_second = number_format($jet_vnoska_card / 1.95583, 2, ".", "");
-                    $jet_obshto_card_second = number_format($jet_obshto_card_second / 1.95583, 2, ".", "");
+                    $jet_vnoska_card_second = number_format($jet_vnoska_card * 1.95583, 2, ".", "");
+                    $jet_obshto_card_second = number_format($jet_obshto_card_second * 1.95583, 2, ".", "");
                 }
                 break;
             case 3:

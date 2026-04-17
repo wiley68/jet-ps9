@@ -1,6 +1,12 @@
 jQuery(document).ready(function ($) {
   let card;
   card = 0;
+  const JET_EUR_BGN_RATE = 1.95583;
+  let jetCartRefreshObserver = null;
+  let jetCartRefreshTimer = null;
+  let jetObservedCartRoot = null;
+  let jetCartRecalcBusy = false;
+  let jetCartNetworkHooksReady = false;
 
   /* function */
   const jetLoad = () => {
@@ -42,7 +48,7 @@ jQuery(document).ready(function ($) {
           $("#jet_alert_overlay").addClass("show");
           jetShowCustomAlert(
             "Месечната вноска трябва да надхвърля сумата от 20 лв.!",
-            false
+            false,
           );
         }
       });
@@ -131,7 +137,7 @@ jQuery(document).ready(function ($) {
             $("#jet_total_credit_price").text(json.jet_total_credit_price);
             if ($("#jet_total_credit_price_second").length !== 0)
               $("#jet_total_credit_price_second").text(
-                json.jet_total_credit_price_second
+                json.jet_total_credit_price_second,
               );
             $("#jet_vnoska_popup").text(json.jet_vnoska);
             if ($("#jet_vnoska_popup_second").length !== 0)
@@ -147,17 +153,17 @@ jQuery(document).ready(function ($) {
                 $("#jet_vnoska_card").text(json.jet_vnoska_card);
                 if ($("#jet_vnoska_card_second").length !== 0)
                   $("#jet_vnoska_card_second").text(
-                    json.jet_vnoska_card_second
+                    json.jet_vnoska_card_second,
                   );
                 $("#jet_vnoski_text_card").text(
-                  parseInt($("#jet_vnoski").val())
+                  parseInt($("#jet_vnoski").val()),
                 );
               }
               if (card == 1) {
                 $("#jet_vnoska_popup").text(json.jet_vnoska_card);
                 if ($("#jet_vnoska_popup_second").length !== 0)
                   $("#jet_vnoska_popup_second").text(
-                    json.jet_vnoska_card_second
+                    json.jet_vnoska_card_second,
                   );
                 $("#jet_gpr").text(json.jet_gpr_card);
                 $("#jet_glp").text(json.jet_glp_card);
@@ -176,7 +182,7 @@ jQuery(document).ready(function ($) {
       $("#jet_alert_overlay").addClass("show");
       jetShowCustomAlert(
         "Първоначалната вноска трябва да бъде по-малка от цената на стоките!",
-        false
+        false,
       );
     }
   };
@@ -251,7 +257,8 @@ jQuery(document).ready(function ($) {
     $.ajax({
       url:
         prestashop.urls.base_url +
-        'index.php?fc=module&module=creditjet&controller=JetSendCart&jet_token=' + $('#jet_static_token').val(),
+        "index.php?fc=module&module=creditjet&controller=JetSendCart&jet_token=" +
+        $("#jet_static_token").val(),
       type: "POST",
       dataType: "json",
       data: {
@@ -280,12 +287,12 @@ jQuery(document).ready(function ($) {
         if (json.success === "success") {
           jetShowCustomAlert(
             "Успешно изпратихте Вашата заявка за лизинг към ПБ Лични Финанси. Очаквайте контакт за потвърждаване на направената от Вас заявка.",
-            true
+            true,
           );
         } else {
           jetShowCustomAlert(
             "Не можете да изпратите Вашата заявка за лизинг към ПБ Лични Финанси. Моля опитайте по-късно.",
-            false
+            false,
           );
         }
       },
@@ -357,7 +364,7 @@ jQuery(document).ready(function ($) {
         $("#jet_alert_overlay").addClass("show");
         jetShowCustomAlert(
           "Месечната вноска трябва да надхвърля сумата от 20 лв.!",
-          false
+          false,
         );
         $("#uslovia").prop("checked", false);
         $("#uslovia1").prop("checked", false);
@@ -423,6 +430,292 @@ jQuery(document).ready(function ($) {
     };
   };
 
+  const jetRelinkCartPopup = () => {
+    const $all = $("#jet-product-popup-container");
+    if ($all.length === 0) {
+      return;
+    }
+    const $host = $(".cart-grid, #wrapper, #content-wrapper, body").first();
+    let $keep = $all.last();
+    if ($host.length) {
+      const $inside = $all.filter(function () {
+        return $.contains($host[0], this);
+      });
+      if ($inside.length) {
+        $keep = $inside.last();
+      }
+    }
+    $all.not($keep).remove();
+    $keep.prependTo("body");
+  };
+
+  const jetExtractNumericPriceStringFromDisplayText = (text) => {
+    if (text == null || typeof text !== "string") {
+      return "";
+    }
+    let s = text
+      .replace(/\u00a0/gi, " ")
+      .replace(/\s+/g, "")
+      .replace(/[^\d.,-]/g, "");
+    if (!s) {
+      return "";
+    }
+    const hasComma = s.indexOf(",") !== -1;
+    const hasDot = s.indexOf(".") !== -1;
+    if (hasComma && hasDot) {
+      const lastC = s.lastIndexOf(",");
+      const lastD = s.lastIndexOf(".");
+      if (lastC > lastD) {
+        return s.replace(/\./g, "").replace(",", ".");
+      }
+      return s.replace(/,/g, "");
+    }
+    if (hasComma && !hasDot) {
+      const parts = s.split(",");
+      if (parts.length === 2 && parts[1].length <= 2) {
+        return parts[0].replace(/\./g, "") + "." + parts[1];
+      }
+      return s.replace(/,/g, "");
+    }
+    if (hasDot && !hasComma) {
+      const parts = s.split(".");
+      if (parts.length === 2 && parts[1].length <= 2) {
+        return parts[0].replace(/,/g, "") + "." + parts[1];
+      }
+      if (parts.length > 2) {
+        return s.replace(/\./g, "");
+      }
+    }
+    return s;
+  };
+
+  const jetReadCartTotalRawStringFromPage = () => {
+    const selectors = [
+      ".cart-summary__line.cart-total .cart-summary__value",
+      ".cart-summary__totals .cart-summary__line.cart-total .cart-summary__value",
+      ".cart-summary__line.cart-total .cart-summary__line__value .cart-summary__value",
+      ".cart-summary__line.cart-total .cart-summary__line__value",
+      ".cart-summary__line.cart-total .value",
+      ".cart-summary-line.cart-total .value",
+      ".cart-summary-totals .value",
+      ".cart__totals .cart-summary-line .value",
+      ".cart-total .value",
+      ".product-line__discount .product-line__price strong",
+      ".product-line__discount .product-line__price",
+      ".cart__total .price",
+      ".cart__total .value",
+    ];
+    for (let i = 0; i < selectors.length; i += 1) {
+      const el = document.querySelector(selectors[i]);
+      if (!el) {
+        continue;
+      }
+      const fromContent = el.getAttribute("content");
+      if (fromContent != null && fromContent !== "") {
+        return fromContent;
+      }
+      const extracted = jetExtractNumericPriceStringFromDisplayText(
+        el.textContent || "",
+      );
+      if (extracted !== "") {
+        return extracted;
+      }
+    }
+
+    const lineTotalNodes = document.querySelectorAll(
+      ".product-line__content-right .product-line__price, .cart__item .product-line__price",
+    );
+    if (lineTotalNodes && lineTotalNodes.length > 0) {
+      let sum = 0;
+      let used = 0;
+      for (let i = 0; i < lineTotalNodes.length; i += 1) {
+        const rawLine = jetExtractNumericPriceStringFromDisplayText(
+          lineTotalNodes[i].textContent || "",
+        );
+        if (rawLine === "") {
+          continue;
+        }
+        const normalizedLine =
+          rawLine.indexOf(".") !== -1 ? rawLine : rawLine.replace(/,/g, ".");
+        const parsedLine = parseFloat(normalizedLine);
+        if (Number.isNaN(parsedLine)) {
+          continue;
+        }
+        sum += parsedLine;
+        used += 1;
+      }
+      if (used > 0) {
+        return sum.toFixed(2);
+      }
+    }
+
+    return "";
+  };
+
+  const jetSyncCartTotalFromDom = () => {
+    const jetPriceEl = document.getElementById("jet_price");
+    if (!jetPriceEl) {
+      return;
+    }
+
+    const raw = jetReadCartTotalRawStringFromPage();
+    if (raw === "") {
+      return;
+    }
+    const normalized = raw.indexOf(".") !== -1 ? raw : raw.replace(/,/g, ".");
+    const parsed = parseFloat(normalized);
+    if (Number.isNaN(parsed)) {
+      return;
+    }
+
+    jetPriceEl.value = String(parsed);
+
+    const jetPriceMain = document.getElementById("jet_priceall");
+    const jetPriceSecond = document.getElementById("jet_priceall_second");
+    const jetEurEl = document.getElementById("jet_eur");
+    if (jetPriceMain) {
+      jetPriceMain.textContent = parsed.toFixed(2);
+    }
+    if (jetPriceSecond && jetEurEl) {
+      const jetEur = parseInt(jetEurEl.value, 10);
+      if (jetEur === 1) {
+        jetPriceSecond.textContent = (parsed / JET_EUR_BGN_RATE).toFixed(2);
+      } else if (jetEur === 2) {
+        jetPriceSecond.textContent = (parsed * JET_EUR_BGN_RATE).toFixed(2);
+      }
+    }
+  };
+
+  const jetScheduleCartRecalculation = () => {
+    if (jetCartRecalcBusy) {
+      return;
+    }
+    if (jetCartRefreshTimer !== null) {
+      clearTimeout(jetCartRefreshTimer);
+    }
+    jetCartRefreshTimer = setTimeout(function () {
+      jetCartRefreshTimer = null;
+      jetCartRecalcBusy = true;
+      jetSetupAjaxCartObserver();
+      jetSyncCartTotalFromDom();
+      jetRelinkCartPopup();
+      jetCalculate();
+      setTimeout(function () {
+        jetCartRecalcBusy = false;
+      }, 250);
+    }, 120);
+  };
+
+  const jetScheduleCartRecalculationBurst = () => {
+    jetScheduleCartRecalculation();
+    setTimeout(jetScheduleCartRecalculation, 300);
+    setTimeout(jetScheduleCartRecalculation, 700);
+  };
+
+  const jetSetupAjaxCartObserver = () => {
+    if (typeof MutationObserver === "undefined") {
+      return;
+    }
+    const cartRoot = document.querySelector(".cart-overview.js-cart, .js-cart");
+    if (!cartRoot) {
+      return;
+    }
+    if (jetCartRefreshObserver !== null && jetObservedCartRoot === cartRoot) {
+      return;
+    }
+    if (jetCartRefreshObserver !== null) {
+      jetCartRefreshObserver.disconnect();
+    }
+    jetCartRefreshObserver = new MutationObserver(function (mutations) {
+      for (let i = 0; i < mutations.length; i += 1) {
+        const mutation = mutations[i];
+        if (
+          mutation.type === "childList" &&
+          (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)
+        ) {
+          jetScheduleCartRecalculation();
+          return;
+        }
+        if (
+          mutation.type === "characterData" ||
+          mutation.type === "attributes"
+        ) {
+          jetScheduleCartRecalculation();
+          return;
+        }
+      }
+    });
+    jetObservedCartRoot = cartRoot;
+    jetCartRefreshObserver.observe(cartRoot, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["value", "data-refresh-url"],
+    });
+  };
+
+  const jetIsCartAjaxUrl = (url) => {
+    if (typeof url !== "string" || url === "") {
+      return false;
+    }
+    return (
+      url.indexOf("action=refresh") !== -1 ||
+      url.indexOf("update=1") !== -1 ||
+      url.indexOf("delete=1") !== -1
+    );
+  };
+
+  const jetSetupCartNetworkHooks = () => {
+    if (jetCartNetworkHooksReady) {
+      return;
+    }
+    jetCartNetworkHooksReady = true;
+
+    if (typeof window.fetch === "function") {
+      const originalFetch = window.fetch;
+      window.fetch = function (input, init) {
+        let reqUrl = "";
+        if (typeof input === "string") {
+          reqUrl = input;
+        } else if (input && typeof input.url === "string") {
+          reqUrl = input.url;
+        }
+        return originalFetch.call(this, input, init).then(function (resp) {
+          if (jetIsCartAjaxUrl(reqUrl)) {
+            jetScheduleCartRecalculationBurst();
+          }
+          return resp;
+        });
+      };
+    }
+
+    if (
+      typeof window.XMLHttpRequest === "function" &&
+      window.XMLHttpRequest.prototype
+    ) {
+      const xhrProto = window.XMLHttpRequest.prototype;
+      const originalOpen = xhrProto.open;
+      const originalSend = xhrProto.send;
+      xhrProto.open = function (method, url) {
+        this.__jetCartUrl = typeof url === "string" ? url : "";
+        return originalOpen.apply(this, arguments);
+      };
+      xhrProto.send = function () {
+        if (
+          this.__jetCartHooked !== true &&
+          jetIsCartAjaxUrl(this.__jetCartUrl || "")
+        ) {
+          this.__jetCartHooked = true;
+          this.addEventListener("loadend", function () {
+            jetScheduleCartRecalculationBurst();
+          });
+        }
+        return originalSend.apply(this, arguments);
+      };
+    }
+  };
+
   const changeBtnJetcreditBuy = () => {
     if ($("#uslovia2").is(":checked")) {
       $("#buy2_jetcredit").prop("disabled", false).css({
@@ -454,21 +747,39 @@ jQuery(document).ready(function ($) {
     }
   });
 
-  const targetNode = document.querySelector("div.card.cart-container");
-  if (targetNode !== null) {
-    if (targetNode instanceof Node) {
-      const observer = new MutationObserver(mutationCallback);
-      const config = {
-        childList: true,
-        subtree: true,
-      };
-      function mutationCallback(mutationsList, observer) {
-        console.log("jetLoad");
-        window.location.reload();
-      }
-      observer.observe(targetNode, config);
-    }
+  $("#jet-product-popup-container").prependTo("body");
+  jetRelinkCartPopup();
+  jetSetupAjaxCartObserver();
+  jetSetupCartNetworkHooks();
+  if (
+    typeof window.prestashop !== "undefined" &&
+    typeof window.prestashop.on === "function"
+  ) {
+    window.prestashop.on("updatedCart", function () {
+      jetScheduleCartRecalculation();
+    });
+    window.prestashop.on("updateCart", function () {
+      jetScheduleCartRecalculationBurst();
+    });
   }
+  $(document).on(
+    "click",
+    ".remove-from-cart, .js-remove-from-cart, [data-link-action='delete-from-cart']",
+    function () {
+      jetScheduleCartRecalculationBurst();
+    },
+  );
+  $(document).on(
+    "click",
+    ".js-increment-button, .js-decrement-button",
+    function () {
+      jetScheduleCartRecalculationBurst();
+    },
+  );
+  $(document).on("change input", ".js-cart-line-product-quantity", function () {
+    jetScheduleCartRecalculationBurst();
+  });
 
   jetLoad();
+  jetScheduleCartRecalculation();
 });

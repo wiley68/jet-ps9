@@ -627,6 +627,40 @@ jQuery(document).ready(function ($) {
     $("body").append(jetAlertBox);
   };
 
+  const jetGetSelectedProductAttributeId = () => {
+    const input = document.querySelector(
+      "#add-to-cart-or-refresh input[name='id_product_attribute'], input[name='id_product_attribute']",
+    );
+    if (input) {
+      const fromInput = parseInt(String(input.value), 10);
+      if (!Number.isNaN(fromInput)) {
+        return fromInput;
+      }
+    }
+
+    const details = document.querySelector(
+      "#product-details[data-product], .js-product-details[data-product]",
+    );
+    if (details && details.dataset && details.dataset.product) {
+      try {
+        const data = JSON.parse(details.dataset.product);
+        if (
+          data &&
+          Object.prototype.hasOwnProperty.call(data, "id_product_attribute")
+        ) {
+          const fromJson = parseInt(String(data.id_product_attribute), 10);
+          if (!Number.isNaN(fromJson)) {
+            return fromJson;
+          }
+        }
+      } catch (e) {
+        // ignore malformed JSON and fall back to 0
+      }
+    }
+
+    return 0;
+  };
+
   const checkForm = () => {
     let check = true;
     const jet_name = document.getElementById("jet_name").value.trim();
@@ -677,9 +711,7 @@ jQuery(document).ready(function ($) {
     if ($("#quantity_wanted").length > 0) {
       jet_quantity = parseFloat($("#quantity_wanted").val());
     }
-    var jetProductDetailsDiv = $("#product-details");
-    var jetDataProductString = jetProductDetailsDiv.attr("data-product");
-    var jetDataProductObject = JSON.parse(jetDataProductString);
+    const jetProductAttributeId = jetGetSelectedProductAttributeId();
     $.ajax({
       url:
         prestashop.urls.base_url +
@@ -705,7 +737,7 @@ jQuery(document).ready(function ($) {
         jet_card: card,
         jet_product_id: $("#jet_product_id").val(),
         jet_quantity: jet_quantity,
-        jet_product_attribute_id: jetDataProductObject.id_product_attribute,
+        jet_product_attribute_id: jetProductAttributeId,
       },
       success: function (json) {
         if (json.success === "success") {
