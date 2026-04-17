@@ -1,18 +1,6 @@
 <?php
 
 /**
- * @property Cart $cart
- * @property Currency $currency
- * @property Language $language
- * @property Country $country
- * @property Order $order
- */
-
-/**
- * @method static \Module getInstanceByName(string $module_name)
- */
-
-/**
  * CreditJet Send Front Controller
  *
  * Handles AJAX requests for sending single product credit applications.
@@ -21,6 +9,14 @@
  *
  * Similar to JetSendCart but focused on single product purchases rather than entire carts.
  * Supports both regular credit and credit card payment requests.
+ *
+ * @property \Cart $cart
+ * @property \Currency $currency
+ * @property \Language $language
+ * @property \Country $country
+ * @property \Order $order
+ *
+ * @method static \Module getInstanceByName(string $module_name)
  *
  * @extends ModuleFrontController
  */
@@ -255,6 +251,7 @@ class CreditJetJetSendModuleFrontController extends ModuleFrontController
                 $this->context->language = new Language($cart->id_lang);
                 $this->context->country = new Country($this->context->country->id);
 
+                /** @var \Creditjet $payment_module */
                 $payment_module = \Module::getInstanceByName('creditjet');
                 if (!$payment_module) {
                     die('Payment module not found');

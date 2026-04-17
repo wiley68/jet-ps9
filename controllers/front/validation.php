@@ -7,6 +7,8 @@
  * This controller processes credit payment requests, validates customer and cart data,
  * creates orders, and sends notification emails to administrators and PB Personal Finance.
  *
+ * @property \Creditjet $module Instance of this payment module (validateOrder, currentOrder, …)
+ *
  * @extends ModuleFrontController
  */
 class CreditJetValidationModuleFrontController extends ModuleFrontController
