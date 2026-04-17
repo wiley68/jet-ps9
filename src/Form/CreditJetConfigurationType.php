@@ -67,6 +67,7 @@ class CreditJetConfigurationType extends TranslatorAwareType
                 'label'      => $this->trans('Interest rate percentage selection', 'Modules.Creditjet.Admin'),
                 'help'       => $this->trans('Interest rate percentage selection', 'Modules.Creditjet.Admin'),
                 'required'   => true,
+                'choice_translation_domain' => false,
                 'choices'    => [
                     '0.00%' => 0.00,
                     '0.80%' => 0.80,
@@ -117,6 +118,7 @@ class CreditJetConfigurationType extends TranslatorAwareType
                     'Modules.Creditjet.Admin'
                 ),
                 'required'   => true,
+                'choice_translation_domain' => false,
                 'choices'    => [
                     '0.00%' => 0.00,
                     '0.80%' => 0.80,
@@ -171,7 +173,6 @@ class CreditJetConfigurationType extends TranslatorAwareType
                     'Modules.Creditjet.Admin'
                 ),
                 'required'   => true,
-                'unit'       => $this->trans('BGN', 'Modules.Creditjet.Admin'),
                 'empty_data' => 150,
             ])
 

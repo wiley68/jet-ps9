@@ -1,4 +1,4 @@
-<div id="jet-product-button-container" style="padding-top:{$jet_gap}px;">
+<div id="jet-product-button-container" class="creditjet-product-button-scope" style="padding-top:{$jet_gap}px;">
     <input type="hidden" id="jet_price" value="{$jet_price}" />
     <input type="hidden" id="jet_product_id" value="{$jet_id_product}" />
     <input type="hidden" id="jet_card_in" value="{$jet_card_in}" />
@@ -68,7 +68,7 @@
     {/if}
 </div>
 
-<div id="jet-product-popup-container" class="{$modalpayment_jet}">
+<div id="jet-product-popup-container" class="{$modalpayment_jet} creditjet-product-popup-scope">
     <div class="modalpayment-content_jet">
         <div id="jet_body">
             <div class="{$jet_PopUp_Detailed_v1}">
