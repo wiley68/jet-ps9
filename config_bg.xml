@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
     <name>creditjet</name>
-    <displayName><![CDATA[ПБ Лични Финанси]]></displayName>
-    <version><![CDATA[1.8.3]]></version>
-    <description><![CDATA[Дава възможност на Вашите клиенти да закупуват стока на изплащане с ПБ Лични Финанси]]></description>
+    <displayName><![CDATA[PB Personal Finance]]></displayName>
+    <version><![CDATA[1.9.1]]></version>
+    <description><![CDATA[Allows your customers to purchase goods on installments with PB Personal Finance]]></description>
     <author><![CDATA[Ilko Ivanov]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
-	<confirmUninstall><![CDATA[Сигурни ли сте, че искате да деинсталирате?]]></confirmUninstall>
+	<confirmUninstall><![CDATA[Сигурни ли сте, че искате да деинсталирате този модул?]]></confirmUninstall>
     <is_configurable>1</is_configurable>
     <need_instance>1</need_instance>
 </module>

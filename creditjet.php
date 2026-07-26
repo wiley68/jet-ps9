@@ -7,7 +7,7 @@
  * @Publisher: Avalon Ltd
  * @Publisher e-mail: home@avalonbg.com
  * @Owner: Avalon Ltd
- * @Version: 1.8.3
+ * @Version: 1.9.1
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -82,6 +82,21 @@ class Creditjet extends PaymentModule
     }
 
     /**
+     * Remove bank payload delimiters from a field value.
+     *
+     * Bank email lines use ";" as end-of-field marker. Semicolons inside values
+     * break automated parsing, so they are stripped before the payload is built.
+     *
+     * @param mixed $value Raw field value
+     *
+     * @return string Sanitized value safe for bank payload rows
+     */
+    public static function sanitizeBankField($value): string
+    {
+        return str_replace(';', '', (string) $value);
+    }
+
+    /**
      * List of hooks that this module registers
      */
     const HOOKS = [
@@ -101,7 +116,7 @@ class Creditjet extends PaymentModule
     {
         $this->name = 'creditjet';
         $this->tab = 'payments_gateways';
-        $this->version = '1.8.3';
+        $this->version = '1.9.1';
         $this->author = 'Ilko Ivanov';
         $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => '9.99.99'];
         $this->bootstrap = true;

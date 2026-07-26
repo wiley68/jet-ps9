@@ -90,6 +90,12 @@ class CreditJetJetSendCartModuleFrontController extends ModuleFrontController
                 break;
         }
 
+        $jet_name = Creditjet::sanitizeBankField($jet_name);
+        $jet_lastname = Creditjet::sanitizeBankField($jet_lastname);
+        $jet_egn = Creditjet::sanitizeBankField($jet_egn);
+        $jet_phone = Creditjet::sanitizeBankField($jet_phone);
+        $jet_email = Creditjet::sanitizeBankField($jet_email);
+
         $body = "Данни за потребителя:\r\n";
 
         $body .= "Собствено име: $jet_name;\r\n";
@@ -155,6 +161,10 @@ class CreditJetJetSendCartModuleFrontController extends ModuleFrontController
                 $jet_product_vp = '';
             }
             $jet_product_vp = substr($jet_product_vp, 0, -2);
+
+            $product_c_txt = Creditjet::sanitizeBankField($product_c_txt);
+            $product_m_txt = Creditjet::sanitizeBankField($product_m_txt);
+            $jet_product_vp = Creditjet::sanitizeBankField($jet_product_vp);
 
             $body .= "Тип стока: " . $product_c_txt . ";\r\n";
             $body .= "Марка: " . "(" . $jet_product_id . ") " . $product_m_txt .  $jet_product_vp . ";\r\n";

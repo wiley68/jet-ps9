@@ -130,6 +130,15 @@ class CreditJetJetSendModuleFrontController extends ModuleFrontController
                 break;
         }
 
+        $jet_name = Creditjet::sanitizeBankField($jet_name);
+        $jet_lastname = Creditjet::sanitizeBankField($jet_lastname);
+        $jet_egn = Creditjet::sanitizeBankField($jet_egn);
+        $jet_phone = Creditjet::sanitizeBankField($jet_phone);
+        $jet_email = Creditjet::sanitizeBankField($jet_email);
+        $product_c_txt = Creditjet::sanitizeBankField($product_c_txt);
+        $product_m_txt = Creditjet::sanitizeBankField($product_m_txt);
+        $jet_product_vp = Creditjet::sanitizeBankField($jet_product_vp);
+
         $body = "Данни за потребителя:\r\n";
 
         $body .= "Собствено име: $jet_name;\r\n";
