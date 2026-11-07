@@ -88,6 +88,7 @@ class CreditJetConfigurationType extends TranslatorAwareType
                     $this->trans('3 months', 'Modules.Creditjet.Admin')  => 3,
                     $this->trans('6 months', 'Modules.Creditjet.Admin')  => 6,
                     $this->trans('9 months', 'Modules.Creditjet.Admin')  => 9,
+                    $this->trans('10 months', 'Modules.Creditjet.Admin') => 10,
                     $this->trans('12 months', 'Modules.Creditjet.Admin') => 12,
                     $this->trans('15 months', 'Modules.Creditjet.Admin') => 15,
                     $this->trans('18 months', 'Modules.Creditjet.Admin') => 18,

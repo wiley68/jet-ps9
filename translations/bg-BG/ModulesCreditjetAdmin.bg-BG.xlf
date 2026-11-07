@@ -31,6 +31,10 @@
     credit scheme</source>
         <target>Неуспешно изтриване на кредитната схема</target>
       </trans-unit>
+      <trans-unit id="4c66783e37f67943377971ed8afeeb26">
+        <source>10 months</source>
+        <target>10 месеца</target>
+      </trans-unit>
       <trans-unit id="e3b2a6d5fe4c268d7f994b6a3bda9811">
         <source>12 months</source>
         <target>12 месеца</target>

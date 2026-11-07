@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Версия на модула: `1.9.1` → `2.0.2` (`creditjet.php`, `config.xml`, `config_bg.xml`).
+
 ## [1.9.1] - 2026-07-26
 
 ### Added

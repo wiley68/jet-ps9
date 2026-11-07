@@ -2,12 +2,11 @@
 <module>
     <name>creditjet</name>
     <displayName><![CDATA[PB Personal Finance]]></displayName>
-    <version><![CDATA[1.9.1]]></version>
+    <version><![CDATA[2.0.2]]></version>
     <description><![CDATA[Allows your customers to purchase goods on installments with PB Personal Finance]]></description>
     <author><![CDATA[Ilko Ivanov]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
-    <confirmUninstall><![CDATA[Are you sure you want to uninstall this module?]]></confirmUninstall>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall this module?]]></confirmUninstall>
     <is_configurable>1</is_configurable>
     <need_instance>1</need_instance>
-    <limited_countries></limited_countries>
 </module>
